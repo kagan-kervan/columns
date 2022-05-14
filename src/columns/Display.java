@@ -15,7 +15,7 @@ public class Display {
 	static SingleLinkedList column4 = new SingleLinkedList();
 	static SingleLinkedList column5 = new SingleLinkedList();
 
-	public static void randomlyNumbertoBox() {
+	private static void fillAndShuffleBox() {
 		int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0, c7 = 0, c8 = 0, c9 = 0, c10 = 0;
 
 		for (int i = 0; i < 50; i++) {
@@ -58,7 +58,7 @@ public class Display {
 		}
 	}
 
-	public static void StartingNumbersAddToColumuns() {
+	private static void distributeNumbersToColumns() {
 		for (int i = 0; i < 6; i++) {
 			column1.add(box.returnHead());
 			box.removeNodeWithPosition(0);
@@ -73,14 +73,13 @@ public class Display {
 		}
 	}
 
-	public static void Initialization() {
-
-		randomlyNumbertoBox();
+	public static void initialize() {
+		fillAndShuffleBox();
 
 		box.display();
 		System.out.println();
 
-		StartingNumbersAddToColumuns();
+		distributeNumbersToColumns();
 		System.out.println();
 
 		System.out.println();
