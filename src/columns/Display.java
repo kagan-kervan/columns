@@ -1,13 +1,12 @@
 package columns;
 
 import enigma.core.Enigma;
-import enigma.console.Console;
+import enigma.console.TextWindow;
 import util.SingleLinkedList;
 
 public class Display {
-
-	private static Console cn = Enigma.getConsole("Columns", 80, 40, 20);
-
+	static TextWindow window = Enigma.getConsole("Columns", 80, 40, 20).getTextWindow();
+	
 	static SingleLinkedList box = new SingleLinkedList();
 
 	static SingleLinkedList column1 = new SingleLinkedList();
@@ -15,7 +14,8 @@ public class Display {
 	static SingleLinkedList column3 = new SingleLinkedList();
 	static SingleLinkedList column4 = new SingleLinkedList();
 	static SingleLinkedList column5 = new SingleLinkedList();
-
+	
+	
 	private static void fillAndShuffleBox() {
 		int c1 = 0, c2 = 0, c3 = 0, c4 = 0, c5 = 0, c6 = 0, c7 = 0, c8 = 0, c9 = 0, c10 = 0;
 
@@ -98,5 +98,4 @@ public class Display {
 		System.out.println(box.size());
 		System.out.println();
 	}
-
 }
