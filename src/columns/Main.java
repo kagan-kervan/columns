@@ -3,7 +3,11 @@ package columns;
 import enigma.core.Enigma;
 
 public class Main {
-	public static void main(String[] args) {		
-		Enigma.getConsole().getTextWindow().output("Hello world");
+	private static Display display;
+
+	public static void main(String[] args) {
+
+		Display display = new Display();
+		Display.Initialization();
 	}
 }
