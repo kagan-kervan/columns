@@ -1,11 +1,12 @@
 package columns;
 
 import enigma.core.Enigma;
+import enigma.console.Console;
 import util.SingleLinkedList;
 
 public class Display {
 
-	public static enigma.console.Console cn = Enigma.getConsole("Columns", 80, 40, 10);
+	private static Console cn = Enigma.getConsole("Columns", 80, 40, 20);
 
 	static SingleLinkedList box = new SingleLinkedList();
 
