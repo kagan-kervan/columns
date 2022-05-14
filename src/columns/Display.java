@@ -39,6 +39,7 @@ public class Display {
 		displayColumnTitles();
 		displayStatusTitles();
 		displayBox(0);
+		displayCursorFrameAtRowOfColumn(0, 0);
 	}
 
 	/**
@@ -46,8 +47,45 @@ public class Display {
 	 */
 	public static void displayRowOfColumn(int column, int row, int number) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column;
-		int verticalOffset = MARGIN_TOP + 2 + (ROW_MARGIN + 1) * row;
+		int verticalOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row;
 		displayString(rightAlignNumber(number), horizontalOffset, verticalOffset);
+	}
+	
+	/**
+	 * Displays the selection frame of the cursor. The frame starts at the given
+	 * row of the column and ends at the end of the column.
+	 */
+	public static void displayCursorFrameAtRowOfColumn(int column, int row) {
+		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
+		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1; 
+		int verticalLinesToDraw = (ROW_MARGIN + 1) * (Game.getColumn(column).size() - row);
+		
+		displayString("+--+", horizontalOffset, verticalStartOffset);
+		
+		for (int i = 0; i < verticalLinesToDraw; i++) {
+			window.output(horizontalOffset, verticalStartOffset + i + 1, '|');
+			window.output(horizontalOffset + 3, verticalStartOffset + i + 1, '|');
+		}
+		
+		displayString("+--+", horizontalOffset, verticalStartOffset + verticalLinesToDraw);
+	}
+	
+	/**
+     * Clears the selection frame of the cursor.
+	 */
+	public static void clearCursorFrameAtRowOfColumn(int column, int row) {
+		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
+		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1; 
+		int verticalLinesToDraw = (ROW_MARGIN + 1) * (Game.getColumn(column).size() - row);
+		
+		displayString("    ", horizontalOffset, verticalStartOffset);
+		
+		for (int i = 0; i < verticalLinesToDraw; i++) {
+			window.output(horizontalOffset, verticalStartOffset + i + 1, ' ');
+			window.output(horizontalOffset + 3, verticalStartOffset + i + 1, ' ');
+		}
+		
+		displayString("    ", horizontalOffset, verticalStartOffset + verticalLinesToDraw);
 	}
 
 	/**
@@ -87,7 +125,7 @@ public class Display {
 		displayString("|" + draw + "|", horizontalOffset, verticalOffset + 1);
 		displayString("+--+", horizontalOffset, verticalOffset + 2);
 	}
-
+	
 	/**
 	 * Displays a string at the specified coordinates.
 	 */

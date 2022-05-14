@@ -10,9 +10,9 @@ public class Game {
 	private static SingleLinkedList box = new SingleLinkedList();
 	
 	public static void main(String[] args) {		
+		Game.initialize();
 		Cursor.initialize();
 		Display.initialize();
-		Game.initialize();
 	}
 	
 	public static SingleLinkedList getBox() {
