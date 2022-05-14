@@ -1,5 +1,7 @@
 package util;
 
+import columns.Display;
+
 public class SingleLinkedList {
 	class Node {
 		Object data;
@@ -120,16 +122,16 @@ public class SingleLinkedList {
 		}
 	}
 
-	public void display() {
-		if (head == null)
-			System.out.println("List is empty");
-		else {
-			Node temp = head;
-
-			while (temp != null) {
-				System.out.print(temp.getData() + " ");
-				temp = temp.getLink();
-			}
+	public void display(int column) {
+		if (head == null) return;
+		
+		int row = 0;
+		Node temp = head;
+		
+		while (temp != null) {
+			Display.displayRowOfColumn(column, row, (int) temp.getData());
+			temp = temp.getLink();
+			row++;
 		}
 	}
 

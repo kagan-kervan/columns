@@ -11,6 +11,7 @@ public class Game {
 	
 	public static void main(String[] args) {		
 		Cursor.initialize();
+		Display.initialize();
 		Game.initialize();
 	}
 	
@@ -28,21 +29,11 @@ public class Game {
 			columns[i] = new SingleLinkedList();
 
 		fillAndShuffleBox();
-
-		box.display();
-		System.out.println();
-
 		distributeNumbersToColumns();
-		System.out.println();
 
 		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
-			System.out.println();
-			columns[i].display();
+			columns[i].display(i);
 		}
-
-		System.out.println();
-		System.out.println(box.size());
-		System.out.println();
 	}
 	
 	private static void fillAndShuffleBox() {
