@@ -15,8 +15,13 @@ public class Game {
 	private static SingleLinkedList box = new SingleLinkedList();
 	private static SingleLinkedList drawingbox = new SingleLinkedList();
 	public static File sound1 = new File("cardsound.wav");
-	
+		
 	public static void main(String[] args) throws IOException {
+		File f = new File("highscore.txt");
+		HighScore hs = new HighScore(f);
+		hs.display();
+		hs.AddtoHighScore("Player 1",378.6);
+		hs.display();
 		Game.initialize();
 		Cursor.initialize();
 		Display.initialize();
