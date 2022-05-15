@@ -60,7 +60,7 @@ public class DoubleLinkedList {
 	}
 	
 	
-	public void displayDescending() 
+	public void displayDescending() //Descending display.
 	{
 		Node temp = head;
 		while(temp!=null) 
@@ -71,7 +71,7 @@ public class DoubleLinkedList {
 		System.out.println();
 	}
 	
-	public void displayAscending() 
+	public void displayAscending() //Ascending display.
 	{
 		Node temp = tail;
 		while(temp!=null) 
