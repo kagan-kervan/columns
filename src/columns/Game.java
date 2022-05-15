@@ -1,5 +1,9 @@
 package columns;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import util.SingleLinkedList;
 
 public class Game {
@@ -9,7 +13,7 @@ public class Game {
 	private static SingleLinkedList[] columns = new SingleLinkedList[NUMBER_OF_COLUMNS];
 	private static SingleLinkedList box = new SingleLinkedList();
 	
-	public static void main(String[] args) {		
+	public static void main(String[] args) throws IOException {
 		Game.initialize();
 		Cursor.initialize();
 		Display.initialize();
