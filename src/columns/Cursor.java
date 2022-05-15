@@ -14,16 +14,6 @@ public abstract class Cursor {
 	private static int row = 0;
 	public static boolean flagg = false;
 
-	static void PlaySound(File Sound) {
-		try {
-			Clip clip = AudioSystem.getClip();
-			clip.open(AudioSystem.getAudioInputStream(Sound));
-			clip.start();
-			Thread.sleep(clip.getMicrosecondLength() / 1000);
-		} catch (Exception e) {
-
-		}
-	}
 
 	public static void initialize() {
 		if (initialized)
@@ -64,12 +54,14 @@ public abstract class Cursor {
 					Cursor.moveCursorHorizontal(false);
 					break;
 				case KeyEvent.VK_B:
-					Game.drawNumberFromBox();
+					if(Game.getDrawingbox().size() != 0)
+					{
+						Game.drawNumberFromBox();
+					}
 					break;
 				case KeyEvent.VK_Z:
 					selectionMode = !selectionMode;
-					File sound = new File("cardsound.wav");
-					PlaySound(sound);
+					Soundpl.PlaySound(Game.sound1);
 					break;
 				}
 			}
