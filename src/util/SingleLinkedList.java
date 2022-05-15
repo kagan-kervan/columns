@@ -69,7 +69,20 @@ public class SingleLinkedList {
 
 		temp.link = next;
 	}
+	
+	
 
+
+	public int removeheadandreturn() {
+		if (head == null) {
+			return 0;
+		}
+		Node temp = head;
+		head = head.getLink();
+		int tempint = (int)temp.getData();
+		return tempint;
+	}
+	
 	public void addSorted(Object dataToAdd) {
 
 		if (head == null) {
@@ -123,11 +136,12 @@ public class SingleLinkedList {
 	}
 
 	public void display(int column) {
-		if (head == null) return;
-		
+		if (head == null)
+			return;
+
 		int row = 0;
 		Node temp = head;
-		
+
 		while (temp != null) {
 			Display.displayRowOfColumn(column, row, (int) temp.getData());
 			temp = temp.getLink();
@@ -157,7 +171,97 @@ public class SingleLinkedList {
 		}
 
 	}
+	
+	public void addNodeWithPosition(int index,Object new_data) 
+	{ 
+		Node new_node=new Node(new_data); 
+		if(index==0) 
+		{ 
+			new_node.setLink(head);
+			head=new_node; 
+			return; 
+		} 
+		else
+		{
+			int count=0; 
+			Node temp=head,prev=null; 
+			while(count<index && temp!=null) 
+			{ 
+				prev=temp; 
+				temp=temp.getLink();	 
+				count++; 
+			} 
+			prev.setLink(new_node);
+			new_node.setLink(temp); 
+		}
+	} 
 
+	public Node findWithIndex(int position) 
+	{
+		Node temp = head;
+		if (temp == null) return null;
+		else
+		{
+			int count = 0;
+			while(temp != null)
+			{
+				if(count == position) break;
+				temp = temp.getLink();
+				count++;
+			}	
+		}
+		return temp;
+	}
+	
+	public void removeby1(Object dataToDelete) {
+		if(size()==1) {
+			return;
+		}
+		while(head != null && (Integer)head.getData()==(Integer)dataToDelete)
+			head = head.getLink();
+		Node temp = head;
+		Node previous = null;
+		while(temp != null) {
+			if((Integer)temp.getData()==(Integer)dataToDelete) {
+				previous.setLink(temp.getLink());
+				temp=previous;
+				break;
+			}
+			previous = temp;
+			temp = temp.getLink();
+		}
+	}
+	
+	public Node removehead() {
+		if (head == null) {
+			return null;
+		}
+		Node temp = head;
+		head = head.getLink();
+		return null;
+	}
+	
+	public void shuffling() 
+	{
+		Node temp;
+		if (head == null) 
+		{
+			System.out.println("linked list is empty");
+		} 
+		else 
+		{
+			for(int i = 0; i < 40; i++)
+			{
+				int randno1 = (int) (Math.random() * 10);
+				int randno2 = (int) (Math.random() * 10);
+				removeNodeWithPosition(randno1);
+				temp = findWithIndex(randno1);
+				addNodeWithPosition(randno2, temp.data);
+			}
+		}
+
+	}
+	
 	public int findMax() {
 		if (head == null) {
 			System.err.println("The Linked List is empty");
