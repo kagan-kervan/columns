@@ -3,7 +3,8 @@ package columns;
 import enigma.core.Enigma;
 import enigma.console.TextWindow;
 
-public class Display {
+public class Display 
+{
 	// Global margins, any screen element will obey these margins.
 	private static final int MARGIN_TOP = 1;
 	private static final int MARGIN_LEFT = 1;
@@ -29,16 +30,20 @@ public class Display {
 	private static final int CONSOLE_ROWS = 40;
 	private static final int FONT_SIZE = 20;
 
+	public static boolean Bused = false;
+	public static boolean box_used = false;
+	public static boolean boxempty = true;
 	public static TextWindow window = Enigma.getConsole(CONSOLE_TITLE, CONSOLE_COLUMNS, CONSOLE_ROWS, FONT_SIZE).getTextWindow();
 
 	/**
 	 * Initializes the elements on the screen, especially the static ones,
 	 * for example box's frame, column titles, and status titles.
 	 */
-	public static void initialize() {
+	public static void initialize() 
+	{
 		displayColumnTitles();
 		displayStatusTitles();
-		displayBox(0);
+		displayBox();
 		displayCursorFrameAtRowOfColumn(0, 0);
 	}
 
@@ -115,15 +120,46 @@ public class Display {
 	 * Displays the frame of the box, and the number that was drawn. If the
 	 * `number` parameter is zero, inside of the box will be displayed blank.
 	 */
-	private static void displayBox(int number) {
-		int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + BOX_MARGIN_LEFT;
-		int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP + 2 + BOX_MARGIN_TOP;
-
-		String draw = number == 0 ? "  " : rightAlignNumber(number);
+	private static void displayBox() 
+	{
 		
-		displayString("+--+", horizontalOffset, verticalOffset);
-		displayString("|" + draw + "|", horizontalOffset, verticalOffset + 1);
-		displayString("+--+", horizontalOffset, verticalOffset + 2);
+		if(Cursor.flagg && boxempty && !Bused)
+		{
+			String draw = "  ";
+			int number = 0;
+			if (Game.getBox().size() != 0)
+			{
+				number = Game.getBox().returnHead();
+				draw = rightAlignNumber(number);
+				Game.getBox().removehead();
+			}
+			else  
+			{
+				draw = rightAlignNumber(number);
+			}
+			
+			int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + BOX_MARGIN_LEFT;
+			int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP + 2 + BOX_MARGIN_TOP;
+
+			displayString("+---+", horizontalOffset, verticalOffset);
+			if(number != 0) displayString("|" + draw + " |", horizontalOffset, verticalOffset + 1);
+			displayString("+---+", horizontalOffset, verticalOffset + 2);
+			boxempty = false;
+			Cursor.flagg = false;
+			Bused = true;
+		}
+		else
+		{
+			int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + BOX_MARGIN_LEFT;
+			int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP + 2 + BOX_MARGIN_TOP;
+			String draw = "  " ;
+			if(Game.getBox() != null) draw = rightAlignNumber((int) Game.getBox().returnHead());
+			displayString("+---+", horizontalOffset, verticalOffset);
+			displayString("|" + draw + " |", horizontalOffset, verticalOffset + 1);
+			displayString("+---+", horizontalOffset, verticalOffset + 2);
+		}
+		
+	
 	}
 	
 	/**

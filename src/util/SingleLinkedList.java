@@ -69,6 +69,15 @@ public class SingleLinkedList {
 
 		temp.link = next;
 	}
+	
+	public Node removehead() {
+		if (head == null) {
+			return null;
+		}
+		Node temp = head;
+		head = head.getLink();
+		return null;
+	}
 
 	public void addSorted(Object dataToAdd) {
 

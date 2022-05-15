@@ -2,13 +2,33 @@ package columns;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.File;
+
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 
 public abstract class Cursor {
 	private static boolean initialized = false;
 	private static boolean selectionMode = false;
 	private static int column = 0;
 	private static int row = 0;
+	public static boolean flagg = false;
+	
+	static void PlaySound(File Sound)
+	  {
+	    try{
+	      Clip clip = AudioSystem.getClip();
+	      clip.open(AudioSystem.getAudioInputStream(Sound));
+	      clip.start();
+	      Thread.sleep(clip.getMicrosecondLength()/1000);
+	    }catch(Exception e)
+	    {
 
+	    }
+	  }
+	
+	
+	
 	public static void initialize() {
 		if (initialized) return;
 		
@@ -30,8 +50,9 @@ public abstract class Cursor {
 			@Override
 			public void keyPressed(KeyEvent event) {
 				int keyCode = event.getKeyCode();
-				
-				switch (keyCode) {
+				//if(Display.box_used = false) flagg = false;
+				switch (keyCode) 
+				{
 					case KeyEvent.VK_UP:
 						Cursor.moveCursorVertical(true);
 						break;
@@ -43,8 +64,15 @@ public abstract class Cursor {
 						break;
 					case KeyEvent.VK_RIGHT:
 						Cursor.moveCursorHorizontal(false);
+						break;
+					case KeyEvent.VK_B:
+						System.out.print("asdas");
+						flagg = true;
+						break;
 					case KeyEvent.VK_Z:
 						selectionMode = !selectionMode;
+						File sound = new File("C:\\Users\\YÝÐÝT\\Desktop\\cardsound.wav");
+						PlaySound(sound);
 						break;
 				}
 			}
