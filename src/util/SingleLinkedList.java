@@ -69,7 +69,7 @@ public class SingleLinkedList {
 
 		temp.link = next;
 	}
-	
+
 	public Node removehead() {
 		if (head == null) {
 			return null;
@@ -132,11 +132,12 @@ public class SingleLinkedList {
 	}
 
 	public void display(int column) {
-		if (head == null) return;
-		
+		if (head == null)
+			return;
+
 		int row = 0;
 		Node temp = head;
-		
+
 		while (temp != null) {
 			Display.displayRowOfColumn(column, row, (int) temp.getData());
 			temp = temp.getLink();

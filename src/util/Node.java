@@ -1,6 +1,5 @@
 package util;
 
-
 public class Node {
 
 	Object data;
@@ -8,11 +7,11 @@ public class Node {
 	Node next;
 	Node prev;
 
-	public Node(Object dataToAdd,double scoretoAdd) {
+	public Node(Object dataToAdd, double scoretoAdd) {
 		data = dataToAdd;
-		score=scoretoAdd;
-		next=null;
-		prev=null;
+		score = scoretoAdd;
+		next = null;
+		prev = null;
 	}
 
 	public Object getData() {
@@ -22,7 +21,7 @@ public class Node {
 	public void setData(Object data) {
 		this.data = data;
 	}
-	
+
 	public Node getNext() {
 		return next;
 	}
@@ -46,5 +45,5 @@ public class Node {
 	public void setScore(double score) {
 		this.score = score;
 	}
-	
+
 }

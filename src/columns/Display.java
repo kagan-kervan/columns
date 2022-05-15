@@ -3,8 +3,7 @@ package columns;
 import enigma.core.Enigma;
 import enigma.console.TextWindow;
 
-public class Display 
-{
+public class Display {
 	// Global margins, any screen element will obey these margins.
 	private static final int MARGIN_TOP = 1;
 	private static final int MARGIN_LEFT = 1;
@@ -12,9 +11,9 @@ public class Display
 	// The margin between two columns, and two rows.
 	private static final int COLUMN_MARGIN = 3;
 	private static final int ROW_MARGIN = 1;
-	
+
 	// The total size of the columns' display area.
-	private static final int COLUMN_AREA_WIDTH = 2+ (2 + COLUMN_MARGIN) * (Game.NUMBER_OF_COLUMNS - 1);
+	private static final int COLUMN_AREA_WIDTH = 2 + (2 + COLUMN_MARGIN) * (Game.NUMBER_OF_COLUMNS - 1);
 
 	// Margins of the status titles.
 	private static final int STATUS_MARGIN_LEFT = 5;
@@ -30,20 +29,17 @@ public class Display
 	private static final int CONSOLE_ROWS = 40;
 	private static final int FONT_SIZE = 20;
 
-	public static boolean Bused = false;
-	public static boolean box_used = false;
-	public static boolean boxempty = true;
-	public static TextWindow window = Enigma.getConsole(CONSOLE_TITLE, CONSOLE_COLUMNS, CONSOLE_ROWS, FONT_SIZE).getTextWindow();
+	public static TextWindow window = Enigma.getConsole(CONSOLE_TITLE, CONSOLE_COLUMNS, CONSOLE_ROWS, FONT_SIZE)
+			.getTextWindow();
 
 	/**
-	 * Initializes the elements on the screen, especially the static ones,
-	 * for example box's frame, column titles, and status titles.
+	 * Initializes the elements on the screen, especially the static ones, for
+	 * example box's frame, column titles, and status titles.
 	 */
-	public static void initialize() 
-	{
+	public static void initialize() {
 		displayColumnTitles();
 		displayStatusTitles();
-		displayBox();
+		displayBox(0);
 		displayCursorFrameAtRowOfColumn(0, 0);
 	}
 
@@ -55,41 +51,41 @@ public class Display
 		int verticalOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row;
 		displayString(rightAlignNumber(number), horizontalOffset, verticalOffset);
 	}
-	
+
 	/**
-	 * Displays the selection frame of the cursor. The frame starts at the given
-	 * row of the column and ends at the end of the column.
+	 * Displays the selection frame of the cursor. The frame starts at the given row
+	 * of the column and ends at the end of the column.
 	 */
 	public static void displayCursorFrameAtRowOfColumn(int column, int row) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
-		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1; 
+		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
 		int verticalLinesToDraw = (ROW_MARGIN + 1) * (Game.getColumn(column).size() - row);
-		
+
 		displayString("+--+", horizontalOffset, verticalStartOffset);
-		
+
 		for (int i = 0; i < verticalLinesToDraw; i++) {
 			window.output(horizontalOffset, verticalStartOffset + i + 1, '|');
 			window.output(horizontalOffset + 3, verticalStartOffset + i + 1, '|');
 		}
-		
+
 		displayString("+--+", horizontalOffset, verticalStartOffset + verticalLinesToDraw);
 	}
-	
+
 	/**
-     * Clears the selection frame of the cursor.
+	 * Clears the selection frame of the cursor.
 	 */
 	public static void clearCursorFrameAtRowOfColumn(int column, int row) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
-		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1; 
+		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
 		int verticalLinesToDraw = (ROW_MARGIN + 1) * (Game.getColumn(column).size() - row);
-		
+
 		displayString("    ", horizontalOffset, verticalStartOffset);
-		
+
 		for (int i = 0; i < verticalLinesToDraw; i++) {
 			window.output(horizontalOffset, verticalStartOffset + i + 1, ' ');
 			window.output(horizontalOffset + 3, verticalStartOffset + i + 1, ' ');
 		}
-		
+
 		displayString("    ", horizontalOffset, verticalStartOffset + verticalLinesToDraw);
 	}
 
@@ -117,51 +113,20 @@ public class Display
 	}
 
 	/**
-	 * Displays the frame of the box, and the number that was drawn. If the
-	 * `number` parameter is zero, inside of the box will be displayed blank.
+	 * Displays the frame of the box, and the number that was drawn. If the `number`
+	 * parameter is zero, inside of the box will be displayed blank.
 	 */
-	private static void displayBox() 
-	{
-		
-		if(Cursor.flagg && boxempty && !Bused)
-		{
-			String draw = "  ";
-			int number = 0;
-			if (Game.getBox().size() != 0)
-			{
-				number = Game.getBox().returnHead();
-				draw = rightAlignNumber(number);
-				Game.getBox().removehead();
-			}
-			else  
-			{
-				draw = rightAlignNumber(number);
-			}
-			
-			int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + BOX_MARGIN_LEFT;
-			int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP + 2 + BOX_MARGIN_TOP;
+	public static void displayBox(int number) {
+		int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + BOX_MARGIN_LEFT;
+		int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP + 2 + BOX_MARGIN_TOP;
 
-			displayString("+---+", horizontalOffset, verticalOffset);
-			if(number != 0) displayString("|" + draw + " |", horizontalOffset, verticalOffset + 1);
-			displayString("+---+", horizontalOffset, verticalOffset + 2);
-			boxempty = false;
-			Cursor.flagg = false;
-			Bused = true;
-		}
-		else
-		{
-			int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + BOX_MARGIN_LEFT;
-			int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP + 2 + BOX_MARGIN_TOP;
-			String draw = "  " ;
-			if(Game.getBox() != null) draw = rightAlignNumber((int) Game.getBox().returnHead());
-			displayString("+---+", horizontalOffset, verticalOffset);
-			displayString("|" + draw + " |", horizontalOffset, verticalOffset + 1);
-			displayString("+---+", horizontalOffset, verticalOffset + 2);
-		}
-		
-	
+		String draw = number == 0 ? "  " : rightAlignNumber(number);
+
+		displayString("+--+", horizontalOffset, verticalOffset);
+		displayString("|" + draw + "|", horizontalOffset, verticalOffset + 1);
+		displayString("+--+", horizontalOffset, verticalOffset + 2);
 	}
-	
+
 	/**
 	 * Displays a string at the specified coordinates.
 	 */
@@ -171,8 +136,8 @@ public class Display
 	}
 
 	/**
-	 * Aligns <i>digits</i> to right. If the number has two digits, say 10,
-	 * the number is not aligned.
+	 * Aligns <i>digits</i> to right. If the number has two digits, say 10, the
+	 * number is not aligned.
 	 * <p>
 	 * Example: if the number is 3 the returned string will be " 3".
 	 */
