@@ -14,6 +14,11 @@ public class Game {
 	private static SingleLinkedList box = new SingleLinkedList();
 	
 	public static void main(String[] args) throws IOException {
+		File f = new File("highscore.txt");
+		HighScore hs = new HighScore(f);
+		hs.display();
+		hs.AddtoHighScore("Player 1",378.6);
+		hs.display();
 		Game.initialize();
 		Cursor.initialize();
 		Display.initialize();
