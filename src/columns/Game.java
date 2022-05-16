@@ -56,29 +56,24 @@ public class Game {
 	private static void fillAndShuffleBox() {
 		int count = 0;
 		int randomno = 0;
-		SingleLinkedList memorysll1 = new SingleLinkedList();
-		SingleLinkedList memorysll2 = new SingleLinkedList();
 		
-		while(count < 10) // filling the list of game table
+		while (count < 30)  // filling the list of game table
 		{
 			randomno = (int) (Math.random() * 10 + 1);
-			if(!memorysll1.search(randomno))
+			if(box.counting(randomno) != 3)
 			{
-				for (int b = 0; b < 3; b++) box.add(randomno);
-				memorysll1.add(randomno);
+				box.add(randomno);
 				count++;
 			}
 		}
 		box.shuffling();
-		
 		count = 0;
-		while(count < 10)  // filling the list of box
+		while(count < 50)  // filling the list of box
 		{
 			randomno = (int) (Math.random() * 10 + 1);
-			if((!memorysll2.search(randomno)))
+			if(drawingbox.counting(randomno) != 5)
 			{
-				for (int b = 0; b < 5; b++) drawingbox.add(randomno);
-				memorysll2.add(randomno);
+				drawingbox.add(randomno);
 				count++;
 			}
 		}

@@ -299,6 +299,26 @@ public class SingleLinkedList {
 		}
 	}
 
+	public int counting(Object data) {
+		int count = 0;
+		if (head == null) {
+			System.out.println("List is empty");
+			return 0;
+		} 
+		else 
+		{
+			Node temp = head;
+			while (temp != null) 
+			{
+				if ((Integer) temp.getData() == (Integer) data)
+					count ++;
+				temp = temp.getLink();
+			}
+			
+		}
+		return count;
+	}
+	
 	public int getIndex(Object data) {
 		if (head == null) {
 			System.out.println("List is empty");
