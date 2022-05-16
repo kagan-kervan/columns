@@ -2,11 +2,12 @@ package util;
 
 import columns.Display;
 
+import java.util.Random;
 public class SingleLinkedList {
 	class Node {
 		Object data;
 		Node link = null;
-
+		
 		public Node(Object dataToAdd) {
 			data = dataToAdd;
 			link = null;
@@ -243,6 +244,7 @@ public class SingleLinkedList {
 	
 	public void shuffling() 
 	{
+		Random r = new Random();
 		Node temp;
 		if (head == null) 
 		{
@@ -250,12 +252,12 @@ public class SingleLinkedList {
 		} 
 		else 
 		{
-			for(int i = 0; i < 40; i++)
+			for(int i = 0; i < 30; i++)
 			{
-				int randno1 = (int) (Math.random() * 10);
-				int randno2 = (int) (Math.random() * 10);
-				removeNodeWithPosition(randno1);
+				int randno1 = (int) r.nextInt(size());
+				int randno2 = (int) r.nextInt(size());
 				temp = findWithIndex(randno1);
+				removeNodeWithPosition(randno1);
 				addNodeWithPosition(randno2, temp.data);
 			}
 		}

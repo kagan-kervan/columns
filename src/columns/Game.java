@@ -69,6 +69,8 @@ public class Game {
 				count++;
 			}
 		}
+		box.shuffling();
+		
 		count = 0;
 		while(count < 10)  // filling the list of box
 		{
