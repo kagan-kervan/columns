@@ -14,7 +14,6 @@ public class Game {
 	private static SingleLinkedList[] columns = new SingleLinkedList[NUMBER_OF_COLUMNS];
 	private static SingleLinkedList box = new SingleLinkedList();
 	private static SingleLinkedList drawingbox = new SingleLinkedList();
-	public static File sound1 = new File("cardsound.wav");
 		
 	public static void main(String[] args) throws IOException {
 		File f = new File("highscore.txt");
@@ -22,6 +21,7 @@ public class Game {
 		hs.display();
 		hs.AddtoHighScore("Player 1",378.6);
 		hs.display();
+		Soundpl.initialize();
 		Game.initialize();
 		Cursor.initialize();
 		Display.initialize();

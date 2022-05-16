@@ -61,7 +61,7 @@ public abstract class Cursor {
 					break;
 				case KeyEvent.VK_Z:
 					selectionMode = !selectionMode;
-					Soundpl.PlaySound(Game.sound1);
+					Soundpl.playCardSound();
 					break;
 				}
 			}
