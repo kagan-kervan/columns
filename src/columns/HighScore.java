@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import util.DoubleLinkedList;
+import util.ScoreNode;
 
 public class HighScore {
 
@@ -21,7 +22,7 @@ public class HighScore {
 		while (sc.hasNextLine()) {
 			String input = sc.nextLine();
 			String[] parts = input.split("-"); // Splits it.
-			DoubleLinkedList.Node nd = new DoubleLinkedList.Node(parts[0], Double.parseDouble(parts[1])); // Creates the
+			ScoreNode nd = new ScoreNode(parts[0], Double.parseDouble(parts[1])); // Creates the
 																											// new node
 																											// from the
 																											// inputs.
@@ -36,7 +37,7 @@ public class HighScore {
 	}
 
 	public void AddtoHighScore(String playername, double playerscore) {
-		DoubleLinkedList.Node nd = new DoubleLinkedList.Node(playername, playerscore); // Creates the new node for the
+		ScoreNode nd = new ScoreNode(playername, playerscore); // Creates the new node for the
 																						// player.
 		dllist.SortedAdd(nd); // Sorted adds the new node.
 
@@ -44,7 +45,7 @@ public class HighScore {
 
 	public void WritingtoFile() throws IOException {
 		FileWriter fw = new FileWriter(f);
-		DoubleLinkedList.Node temp = dllist.head;
+		ScoreNode temp = dllist.head;
 		while (temp != null) {
 			String output = (String) temp.getData() + "-" + temp.getScore(); // Creates the output string.
 			if (temp.getNext() != null)
