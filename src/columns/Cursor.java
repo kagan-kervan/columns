@@ -54,7 +54,7 @@ public abstract class Cursor {
 					Cursor.moveCursorHorizontal(false);
 					break;
 				case KeyEvent.VK_B:
-					if(Game.getDrawingbox().size() != 0)
+					if(Game.getBox().size() != 0)
 					{
 						Game.drawNumberFromBox();
 					}
@@ -62,6 +62,9 @@ public abstract class Cursor {
 				case KeyEvent.VK_Z:
 					selectionMode = !selectionMode;
 					Soundpl.playCardSound();
+					break;
+				case KeyEvent.VK_E:
+					System.exit(0); // user can go back to menu with pressing E, we will redirect the user.
 					break;
 				}
 			}
