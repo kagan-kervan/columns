@@ -53,6 +53,7 @@ public abstract class Cursor {
 					case KeyEvent.VK_X:
 						boolean transferred = Game.transferNumbers(column, row, destinationColumn);
 						if (transferred) exitSelectionMode();
+						Soundpl.playCardTransferringSound();
 						break;
 					case KeyEvent.VK_Z:
 						exitSelectionMode();

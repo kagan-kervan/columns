@@ -127,9 +127,10 @@ public class Game {
 			emptyBox = false;
 			
 		} 
-		else if(!emptyBox)
+		else if(!emptyBox) // number will be added to selected column here.
 		{
 			Display.displayBox(lastboxnumber);
+			Soundpl.playCardSound();
 		}
 		else
 		{
