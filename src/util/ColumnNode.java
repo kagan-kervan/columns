@@ -15,6 +15,20 @@ public class ColumnNode {
 	public Object getData() {
 		return data;
 	}
+	
+	public int getSize() {
+		if (this.right == null) return 0;
+		
+		CardNode card = this.right;
+		int count = 0;
+		
+		while(card != null) {
+			card = card.getNext();
+			count++;
+		}
+		
+		return count;
+	}
 
 	public void setData(Object data) {
 		this.data = data;
@@ -35,5 +49,4 @@ public class ColumnNode {
 	public void setRight(CardNode right) {
 		this.right = right;
 	}
-	
 }

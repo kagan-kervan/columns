@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 import util.SingleLinkedList;
+import util.CardNode;
+import util.ColumnNode;
+import util.MultiLinkedList;
 
 public class Game {
 	public static final int NUMBER_OF_COLUMNS = 5;
@@ -12,7 +15,7 @@ public class Game {
 	public static boolean emptyBox = true;
 	public static int lastboxnumber = 0;
 	
-	private static SingleLinkedList[] columns = new SingleLinkedList[NUMBER_OF_COLUMNS];
+	private static MultiLinkedList columns = new MultiLinkedList();
 	private static SingleLinkedList box = new SingleLinkedList();
 		
 	public static void main(String[] args) throws IOException {
@@ -32,24 +35,58 @@ public class Game {
 		return box;
 	}
 
-	public static SingleLinkedList getColumn(int index) {
-		return columns[index];
+	public static ColumnNode getColumn(int index) {
+		ColumnNode column = columns.getHead();
+		if (column == null) return null;
+
+		for (int i = 0; i < index; i++)
+			column = column.getDown();
+		
+		return column;
 	}
 
 	private static void initialize() {
 		// Initialize single linked lists in the `columns` array.
 		for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
-			columns[i] = new SingleLinkedList();
+			 columns.AddColumn(i);
 
 		fillAndShuffleBox(30);
 		distributeNumbersToColumns(30);
 		fillAndShuffleBox(50);
 
-		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
-			columns[i].display(i);
-		}
+		for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
+			Display.displayColumn(i);
 	}
 
+	public static boolean transferNumbers(int sourceColumnIndex, int rowIndex, int destinationColumnIndex) {
+		ColumnNode source = Game.getColumn(sourceColumnIndex);
+		ColumnNode destination = Game.getColumn(destinationColumnIndex);
+		CardNode card = destination.getRight();
+		
+		CardNode top = source.getRight();
+		for (int i = 0; i < rowIndex; i++)
+			top = top.getNext();
+		
+		int topNumber = (int) top.getData();
+		
+		if (card == null) {
+			if (topNumber != 1 || topNumber != 10) return false;
+			
+			// TODO: actually transfer the nodes
+		} else {
+			while (card.getNext() != null)
+				card = card.getNext();
+			
+			int lastNumber = (int) card.getData();
+			
+			if (Math.abs(lastNumber - topNumber) > 1) return false;
+			
+			// TODO: actually transfer the nodes
+		}
+		
+		return true;
+	}
+	
 	private static void fillAndShuffleBox(int number) {
 		int count = 0;
 		int randomno = 0;
@@ -74,7 +111,7 @@ public class Game {
 		while(number > count)
 		{
 			randomno = (int) (Math.random() * 5);
-			columns[randomno].add(box.returnHead());
+			columns.AddCard(randomno, box.returnHead());
 			box.removeNodeWithPosition(0);
 			count++;
 		}	

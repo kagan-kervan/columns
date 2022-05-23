@@ -1,5 +1,6 @@
 package columns;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
@@ -7,13 +8,14 @@ import java.io.File;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
+import enigma.console.TextAttributes;
+
 public abstract class Cursor {
 	private static boolean initialized = false;
-	private static boolean selectionMode = false;
 	private static int column = 0;
 	private static int row = 0;
-	public static boolean flagg = false;
-
+	private static boolean selectionMode = false;
+	private static int destinationColumn = 0;
 
 	public static void initialize() {
 		if (initialized)
@@ -21,7 +23,7 @@ public abstract class Cursor {
 
 		// Start the cursor from the first non-empty column.
 		for (int i = 0; i < Game.NUMBER_OF_COLUMNS; i++) {
-			if (Game.getColumn(i).size() > 0) {
+			if (Game.getColumn(i).getSize() > 0) {
 				Cursor.column = i;
 				break;
 			}
@@ -39,33 +41,51 @@ public abstract class Cursor {
 			@Override
 			public void keyPressed(KeyEvent event) {
 				int keyCode = event.getKeyCode();
-				// if(Display.box_used = false) flagg = false;
-				switch (keyCode) {
-				case KeyEvent.VK_UP:
-					Cursor.moveCursorVertical(true);
-					break;
-				case KeyEvent.VK_DOWN:
-					Cursor.moveCursorVertical(false);
-					break;
-				case KeyEvent.VK_LEFT:
-					Cursor.moveCursorHorizontal(true);
-					break;
-				case KeyEvent.VK_RIGHT:
-					Cursor.moveCursorHorizontal(false);
-					break;
-				case KeyEvent.VK_B:
-					if(Game.getBox().size() != 0)
-					{
-						Game.drawNumberFromBox();
+
+				if (selectionMode) {
+					switch (keyCode) {
+					case KeyEvent.VK_LEFT:
+						Cursor.selectColumn(false);
+						break;
+					case KeyEvent.VK_RIGHT:
+						Cursor.selectColumn(true);
+						break;
+					case KeyEvent.VK_X:
+						boolean transferred = Game.transferNumbers(column, row, destinationColumn);
+						if (transferred) exitSelectionMode();
+						break;
+					case KeyEvent.VK_Z:
+						exitSelectionMode();
+						break;
 					}
-					break;
-				case KeyEvent.VK_Z:
-					selectionMode = !selectionMode;
-					Soundpl.playCardSound();
-					break;
-				case KeyEvent.VK_E:
-					System.exit(0); // user can go back to menu with pressing E, we will redirect the user.
-					break;
+
+				} else {
+					switch (keyCode) {
+					case KeyEvent.VK_UP:
+						Cursor.moveCursorVertical(true);
+						break;
+					case KeyEvent.VK_DOWN:
+						Cursor.moveCursorVertical(false);
+						break;
+					case KeyEvent.VK_LEFT:
+						Cursor.moveCursorHorizontal(true);
+						break;
+					case KeyEvent.VK_RIGHT:
+						Cursor.moveCursorHorizontal(false);
+						break;
+					case KeyEvent.VK_B:
+						if(Game.getBox().size() != 0)
+						{
+							Game.drawNumberFromBox();
+						}
+						break;
+					case KeyEvent.VK_Z:
+						enterSelectionMode();
+						break;
+					case KeyEvent.VK_E:
+						System.exit(0); // user can go back to menu with pressing E, we will redirect the user.
+						break;
+					}					
 				}
 			}
 		};
@@ -77,6 +97,24 @@ public abstract class Cursor {
 		// not get initialized more than once in the future.
 		initialized = true;
 	}
+	
+	private static void enterSelectionMode() {
+		selectionMode = true;
+		destinationColumn = 0;
+		Display.displayColumnTitle(destinationColumn, new TextAttributes(Color.GREEN));
+	}
+	
+	private static void exitSelectionMode() {
+		selectionMode = false;
+		Display.displayColumnTitle(destinationColumn, new TextAttributes(Color.WHITE));
+	}
+		
+	public static void selectColumn(boolean selectNext) {
+		Display.displayColumnTitle(destinationColumn, new TextAttributes(Color.WHITE));
+		destinationColumn += Game.NUMBER_OF_COLUMNS + (selectNext ? 1 : -1);
+		destinationColumn %= Game.NUMBER_OF_COLUMNS;
+		Display.displayColumnTitle(destinationColumn, new TextAttributes(Color.GREEN));
+	}
 
 	/**
 	 * Moves the cursor vertically. If the limit is exceeded, the cursor starts from
@@ -87,7 +125,7 @@ public abstract class Cursor {
 		Display.clearCursorFrameAtRowOfColumn(column, row);
 
 		// Move the current row
-		int columnSize = Game.getColumn(Cursor.column).size();
+		int columnSize = Game.getColumn(Cursor.column).getSize();
 		Cursor.row += columnSize + (moveUp ? -1 : 1);
 		Cursor.row %= columnSize;
 
@@ -112,7 +150,7 @@ public abstract class Cursor {
 		for (int i = 0; i < Game.NUMBER_OF_COLUMNS; i++) {
 			Cursor.column += Game.NUMBER_OF_COLUMNS + (moveLeft ? -1 : 1);
 			Cursor.column %= Game.NUMBER_OF_COLUMNS;
-			int columnSize = Game.getColumn(Cursor.column).size();
+			int columnSize = Game.getColumn(Cursor.column).getSize();
 
 			// If a non-empty column is found, select it.
 			if (columnSize > 0) {

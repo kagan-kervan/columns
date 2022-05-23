@@ -136,20 +136,6 @@ public class SingleLinkedList {
 		}
 	}
 
-	public void display(int column) {
-		if (head == null)
-			return;
-
-		int row = 0;
-		Node temp = head;
-
-		while (temp != null) {
-			Display.displayRowOfColumn(column, row, (int) temp.getData());
-			temp = temp.getLink();
-			row++;
-		}
-	}
-
 	public void remove(Object dataToDelete) {
 		if (head == null) {
 			System.out.println("linked lis is empty");

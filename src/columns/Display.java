@@ -1,6 +1,14 @@
 package columns;
 
 import enigma.core.Enigma;
+import util.CardNode;
+import util.ColumnNode;
+
+import java.awt.Color;
+
+import org.w3c.dom.Text;
+
+import enigma.console.TextAttributes;
 import enigma.console.TextWindow;
 
 public class Display {
@@ -37,21 +45,36 @@ public class Display {
 	 * example box's frame, column titles, and status titles.
 	 */
 	public static void initialize() {
-		displayColumnTitles();
 		displayStatusTitles();
 		displayBox(0);
 		displayCursorFrameAtRowOfColumn(0, 0);
 	}
 
-	/**
-	 * Displays the number at a specific row of a column.
-	 */
-	public static void displayRowOfColumn(int column, int row, int number) {
+	public static void displayColumnTitle(int column, TextAttributes attributes) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column;
-		int verticalOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row;
-		displayString(rightAlignNumber(number), horizontalOffset, verticalOffset);
+		displayString("C" + (column + 1), horizontalOffset, MARGIN_TOP, attributes);
+		displayString("--", horizontalOffset, MARGIN_TOP + 1, attributes);	
 	}
-
+	
+	public static void displayColumn(int index) {
+		displayColumnTitle(index, new TextAttributes(Color.WHITE));
+		
+		// Display numbers
+		ColumnNode column = Game.getColumn(index);
+		CardNode card = column.getRight();
+		
+		int row = 0;
+		while (card != null) {
+			int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
+			int verticalOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row;
+			int number = (int) card.getData();
+			displayString(rightAlignNumber(number), horizontalOffset, verticalOffset);
+			
+			row++;
+			card = card.getNext();
+		}	
+	}
+	
 	/**
 	 * Displays the selection frame of the cursor. The frame starts at the given row
 	 * of the column and ends at the end of the column.
@@ -59,7 +82,7 @@ public class Display {
 	public static void displayCursorFrameAtRowOfColumn(int column, int row) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
 		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
-		int verticalLinesToDraw = (ROW_MARGIN + 1) * (Game.getColumn(column).size() - row);
+		int verticalLinesToDraw = (ROW_MARGIN + 1) * (Game.getColumn(column).getSize() - row);
 
 		displayString("+--+", horizontalOffset, verticalStartOffset);
 
@@ -77,7 +100,7 @@ public class Display {
 	public static void clearCursorFrameAtRowOfColumn(int column, int row) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
 		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
-		int verticalLinesToDraw = (ROW_MARGIN + 1) * (Game.getColumn(column).size() - row);
+		int verticalLinesToDraw = (ROW_MARGIN + 1) * (Game.getColumn(column).getSize() - row);
 
 		displayString("    ", horizontalOffset, verticalStartOffset);
 
@@ -87,18 +110,6 @@ public class Display {
 		}
 
 		displayString("    ", horizontalOffset, verticalStartOffset + verticalLinesToDraw);
-	}
-
-	/**
-	 * Displays column titles "C1", "C2", ..., "CN" etc.
-	 */
-	private static void displayColumnTitles() {
-		for (int i = 0; i < Game.NUMBER_OF_COLUMNS; i++) {
-			int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * i;
-
-			displayString("C" + (i + 1), horizontalOffset, MARGIN_TOP);
-			displayString("--", horizontalOffset, MARGIN_TOP + 1);
-		}
 	}
 
 	/**
@@ -133,6 +144,14 @@ public class Display {
 	private static void displayString(String str, int left, int top) {
 		window.setCursorPosition(left, top);
 		window.output(str);
+	}
+	
+	/**
+	 * Displays a string at the specified coordinates.
+	 */
+	private static void displayString(String str, int left, int top, TextAttributes attributes) {
+		window.setCursorPosition(left, top);
+		window.output(str, attributes);
 	}
 
 	/**
