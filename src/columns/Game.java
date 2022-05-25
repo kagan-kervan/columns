@@ -147,7 +147,7 @@ public class Game {
 
 		window.addKeyListener(keyListener);
 		
-		displayStatusTitles();
+		displayTransfersAndScore();
 		displayBox(0);
 		displayCursorFrameAtRowOfColumn(0, 0);
 	}
@@ -187,11 +187,11 @@ public class Game {
 
 		lastboxnumber = 0;
 		emptyBox = true;
+		transfers++;
 		
 		displayColumn(destinationColumnIndex);
 		displayBox(0);
-		
-		transfers++;
+		displayTransfersAndScore();
 		
 		return true;
 	}
@@ -252,10 +252,11 @@ public class Game {
 			}
 		}
 
+		transfers++;
+
 		displayColumn(sourceColumnIndex);
 		displayColumn(destinationColumnIndex);
-		
-		transfers++;
+		displayTransfersAndScore();
 
 		return true;
 	}
@@ -559,12 +560,12 @@ public class Game {
 	/**
 	 * Displays the status titles, namely "Transfer" and "Score".
 	 */
-	private void displayStatusTitles() {
+	private void displayTransfersAndScore() {
 		int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + STATUS_MARGIN_LEFT;
 		int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP;
 
-		displayString("Transfer: ", horizontalOffset, verticalOffset);
-		displayString("Score:    ", horizontalOffset, verticalOffset + 1);
+		displayString("Transfer:          " + transfers, horizontalOffset, verticalOffset);
+		displayString("   Score:          " + playerscore, horizontalOffset, verticalOffset + 1);
 	}
 
 	/**
