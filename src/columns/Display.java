@@ -57,7 +57,15 @@ public class Display {
 	}
 	
 	public static void displayColumn(int index) {
-		displayColumnTitle(index, new TextAttributes(Color.WHITE));
+		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
+		
+		// Clear the column area entirely
+		for (int i = 0; i < Display.window.getRows(); i++)
+			displayString("    ", horizontalOffset - 1, i);
+		
+		// Display title
+		displayString("C" + (index+ 1), horizontalOffset, MARGIN_TOP);
+		displayString("--", horizontalOffset, MARGIN_TOP + 1);	
 		
 		// Display numbers
 		ColumnNode column = Game.getColumn(index);
@@ -65,7 +73,7 @@ public class Display {
 		
 		int row = 0;
 		while (card != null) {
-			int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
+			horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
 			int verticalOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row;
 			int number = (int) card.getData();
 			displayString(rightAlignNumber(number), horizontalOffset, verticalOffset);
