@@ -1,7 +1,5 @@
 package util;
 
-import columns.Display;
-
 import java.util.Random;
 public class SingleLinkedList {
 	

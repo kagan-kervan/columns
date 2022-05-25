@@ -4,10 +4,6 @@ import enigma.core.Enigma;
 import util.CardNode;
 import util.ColumnNode;
 
-import java.awt.Color;
-
-import org.w3c.dom.Text;
-
 import enigma.console.TextAttributes;
 import enigma.console.TextWindow;
 

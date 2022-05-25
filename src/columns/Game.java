@@ -23,6 +23,8 @@ public class Game {
 	public static void main(String[] args) throws IOException {
 		File f = new File("highscore.txt");
 		HighScore hs = new HighScore(f);
+		hs.display();
+		
 		Soundpl.initialize();
 		Game.initialize();
 		Cursor.initialize();
@@ -256,29 +258,5 @@ public class Game {
 			Display.displayBox(0);
 		}
 	}
-	/*
-	public static void drawNumberFromBox(int column) 
-	{
-		if (box.size() != 0 && emptyBox) // box empty boolean will be added here when transferring operations are done 
-		{
-			Display.displayBox(box.returnHead());
-			lastboxnumber = box.returnHead();
-			box.removeNodeWithPosition(0);
-			emptyBox = false;
-			
-		} 
-		else if(!emptyBox)
-		{
-			Game.getColumn(column).add(lastboxnumber);
-			Display.displayBox(0);
-			emptyBox = true;
-		}
-		else
-		{
-			// The box is empty, number 0 prints an
-			// empty box.
-			Display.displayBox(0);
-		}
-	}
-	*/
+	
 }
