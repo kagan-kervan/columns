@@ -95,21 +95,21 @@ public class MultiLinkedList {
 			System.out.println("There is no column in the list");
 		else {
 			while(column!=null && (int)column.getData()!=columnIndex)
-				column=column.getDown();
+				column=column.getDown();  // Finds the column.
 			CardNode currentCard = column.getRight();
 			CardNode prevCard = null;
-			for (int i = 0; i < Startingpoint; i++) 
+			for (int i = 0; i < Startingpoint; i++)  // Goes till the deck's starting point.
 			{
 				prevCard=currentCard;
 				currentCard=currentCard.getNext();
 			}
-			while(currentCard!=null && (int)currentCard.getData()!=numberIndex) 
+			while(currentCard!=null && (int)currentCard.getData()!=numberIndex)  // Finds the card that will delete.
 			{
 				prevCard=currentCard;
 				currentCard=currentCard.getNext();
 			}
 			if(prevCard==null)
-				column.setRight(column.getRight().getNext());
+				column.setRight(column.getRight().getNext());      // Deletes the card.
 			else if(currentCard !=null) {
 				prevCard.setNext(currentCard.getNext());
 			}

@@ -92,26 +92,26 @@ public class Game {
 	{
 		ColumnNode column = Game.getColumn(ColumnIndex);
 		CardNode card = column.getRight();
-		FinishedDeckStartingPoint=0;
+		FinishedDeckStartingPoint=0; 
 		int count = 0;
 		while(card !=null) 
 		{
-			while(card.getNext()!=null && (Integer)card.getData()!=1 && (Integer)card.getData()!=10) {
-				card=card.getNext();
+			while(card.getNext()!=null && (Integer)card.getData()!=1 && (Integer)card.getData()!=10) { // Finds the starting
+				card=card.getNext();																// point of the deck.	
 				FinishedDeckStartingPoint ++;
 			}
 			if(card.getNext() == null)
 				return false;
-			int startingnumber = (int) card.getData();
+			int startingnumber = (int) card.getData(); // Gets the starting number.
 			CardNode temp = card;
 			if(startingnumber==10) {
 				while(temp.getNext()!=null) {
 					if((int)temp.getData()==startingnumber) {
-						count ++;
-						startingnumber --;
+						count ++;                    // Increase the count.
+						startingnumber --;         // Decrease the number that uses in the matching deck.
 					}
 					else {
-						count = 0;
+						count = 0;   //Reset the count.
 						startingnumber = 10;
 						break;
 					}
@@ -121,11 +121,11 @@ public class Game {
 			else {
 				while(temp!=null) {
 					if((int)temp.getData()==startingnumber) {
-						count ++;
-						startingnumber ++;
+						count ++;             // Increase the count.
+						startingnumber ++;      // Increase the number that uses in the matching deck.
 					}
 					else {
-						count = 0;
+						count = 0;       // Resets the count.
 						startingnumber = 1;
 						break;
 					}
@@ -133,7 +133,7 @@ public class Game {
 				}
 			}
 			if(count == 10)
-				return true;
+				return true;  
 			card=card.getNext();
 			
 		}
@@ -152,6 +152,7 @@ public class Game {
 			for (int i = 0; i < 5; i++) {
 				box.add(randomno);
 				count ++;
+				box.shuffling();
 			}
 			box.shuffling();
 		}

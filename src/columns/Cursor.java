@@ -55,11 +55,12 @@ public abstract class Cursor {
 						if (transferred) exitSelectionMode();
 						Soundpl.playCardTransferringSound();
 						for (int i = 0; i < 5; i++) {
-							boolean isCompleted = Game.isDeckCompleted(i);
+							boolean isCompleted = Game.isDeckCompleted(i); // Checks if there is any completed decks in the columns.
 							if(isCompleted==true) {
-								Game.playerscore += 1000;
+								Game.playerscore += 1000;  // Gives the score to the player.
 								for (int j = 1; j <= 10; j++) {
-									Game.columns.DeleteFromtheFinishedDeck(i, j, Game.FinishedDeckStartingPoint);
+									Game.columns.DeleteFromtheFinishedDeck(i, j, Game.FinishedDeckStartingPoint); // Deletes 
+																											//the finished deck.
 								}
 								
 						}
