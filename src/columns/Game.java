@@ -104,9 +104,22 @@ public class Game {
 			}
 		}
 		
+		// Checks if there is any completed decks in the columns.
+		if (Game.isDeckCompleted(destinationColumnIndex)) {
+			// Gives the score to the player.
+			Game.playerscore += 1000;
+
+			for (int i = 1; i <= 10; i++) {
+				// Deletes the finished deck.
+				Game.columns.DeleteFromtheFinishedDeck(destinationColumnIndex, i, Game.FinishedDeckStartingPoint);
+			}
+		}
+
 		Display.displayColumn(sourceColumnIndex);
 		Display.displayColumn(destinationColumnIndex);
 
+		
+		
 		return true;
 	}
 	
