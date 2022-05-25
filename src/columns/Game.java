@@ -59,31 +59,53 @@ public class Game {
 	}
 
 	public static boolean transferNumbers(int sourceColumnIndex, int rowIndex, int destinationColumnIndex) {
+		if (sourceColumnIndex == destinationColumnIndex) return false;
+		
 		ColumnNode source = Game.getColumn(sourceColumnIndex);
 		ColumnNode destination = Game.getColumn(destinationColumnIndex);
-		CardNode card = destination.getRight();
 		
 		CardNode top = source.getRight();
-		for (int i = 0; i < rowIndex; i++)
+		CardNode nodeBeforeTop = null;
+		
+		for (int i = 0; i < rowIndex; i++) {
+			nodeBeforeTop = top;
 			top = top.getNext();
+		}
 		
 		int topNumber = (int) top.getData();
 		
-		if (card == null) {
-			if (topNumber != 1 || topNumber != 10) return false;
+		if (destination.getRight() == null) {
+			if (!(topNumber == 1 || topNumber == 10)) return false;
 			
-			// TODO: actually transfer the nodes
+			destination.setRight(top);
+			
+			if (nodeBeforeTop == null) {
+				source.setRight(null);
+			} else {
+				nodeBeforeTop.setNext(null);
+			}
 		} else {
-			while (card.getNext() != null)
-				card = card.getNext();
+			CardNode lastNode = destination.getRight();
 			
-			int lastNumber = (int) card.getData();
+			while (lastNode.getNext() != null)
+				lastNode = lastNode.getNext();
+			
+			int lastNumber = (int) lastNode.getData();
 			
 			if (Math.abs(lastNumber - topNumber) > 1) return false;
+
+			lastNode.setNext(top);
 			
-			// TODO: actually transfer the nodes
+			if (nodeBeforeTop == null) {
+				source.setRight(null);
+			} else {
+				nodeBeforeTop.setNext(null);
+			}
 		}
 		
+		Display.displayColumn(sourceColumnIndex);
+		Display.displayColumn(destinationColumnIndex);
+
 		return true;
 	}
 	

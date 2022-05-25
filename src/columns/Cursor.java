@@ -101,7 +101,7 @@ public abstract class Cursor {
 	
 	private static void enterSelectionMode() {
 		selectionMode = true;
-		destinationColumn = 0;
+		destinationColumn = column;
 		Display.displayColumnTitle(destinationColumn, new TextAttributes(Color.GREEN));
 	}
 	
