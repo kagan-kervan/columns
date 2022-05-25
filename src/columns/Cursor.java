@@ -15,6 +15,7 @@ public abstract class Cursor {
 	private static int column = 0;
 	private static int row = 0;
 	private static boolean selectionMode = false;
+	private static boolean transferFromBox = false;
 	private static int destinationColumn = 0;
 
 	public static void initialize() {
@@ -51,11 +52,17 @@ public abstract class Cursor {
 						Cursor.selectColumn(true);
 						break;
 					case KeyEvent.VK_X:
-						boolean transferred = Game.transferNumbers(column, row, destinationColumn);
-						if (transferred) exitSelectionMode();
+						boolean transferred;
+						if (transferFromBox) {
+ 							transferred = Game.transferLastNumberFromBox(destinationColumn);
+						} else {
+							transferred = Game.transferNumbers(column, row, destinationColumn);	
+ 						}
+						
+ 						if (transferred) exitSelectionMode();
 						Soundpl.playCardTransferringSound();
 						break;
-					case KeyEvent.VK_Z:
+					case KeyEvent.VK_Z, KeyEvent.VK_B:
 						exitSelectionMode();
 						break;
 					}
@@ -74,13 +81,18 @@ public abstract class Cursor {
 					case KeyEvent.VK_RIGHT:
 						Cursor.moveCursorHorizontal(false);
 						break;
-					case KeyEvent.VK_B:
-						if(Game.getBox().size() != 0)
-						{
-							Game.drawNumberFromBox();
+					case KeyEvent.VK_B: 
+						if (Game.lastboxnumber == 0) {
+							if(Game.getBox().size() != 0) {
+								Game.drawNumberFromBox();
+							}	
+						} else {
+							transferFromBox = true;
+							enterSelectionMode();
 						}
 						break;
 					case KeyEvent.VK_Z:
+						transferFromBox = false;
 						enterSelectionMode();
 						break;
 					case KeyEvent.VK_E:

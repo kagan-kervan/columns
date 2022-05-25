@@ -58,7 +58,35 @@ public class Game {
 		for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
 			Display.displayColumn(i);
 	}
+	
+	public static boolean transferLastNumberFromBox(int destinationColumnIndex) {
+		ColumnNode destination = Game.getColumn(destinationColumnIndex);
+		
+		if (destination.getRight() == null) {
+			if (!(lastboxnumber == 1 || lastboxnumber == 10)) return false;
+			destination.setRight(new CardNode(lastboxnumber));
+		} else {
+			CardNode lastNode = destination.getRight();
+			
+			while (lastNode.getNext() != null)
+				lastNode = lastNode.getNext();
+			
+			int lastNumber = (int) lastNode.getData();
+			
+			if (Math.abs(lastNumber - lastboxnumber) > 1) return false;
+			
+			lastNode.setNext(new CardNode(lastboxnumber));
+		}
 
+		Game.lastboxnumber = 0;
+		Game.emptyBox = true;
+		
+		Display.displayColumn(destinationColumnIndex);
+		Display.displayBox(0);
+		
+		return true;
+	}
+	
 	public static boolean transferNumbers(int sourceColumnIndex, int rowIndex, int destinationColumnIndex) {
 		if (sourceColumnIndex == destinationColumnIndex) return false;
 		
