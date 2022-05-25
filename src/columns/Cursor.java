@@ -56,7 +56,7 @@ public abstract class Cursor {
  						}
 						
  						if (transferred) exitSelectionMode();
-						Soundpl.playCardTransferringSound();
+						Game.playCardTransferringSound();
 						break;
 					case KeyEvent.VK_Z, KeyEvent.VK_B:
 						exitSelectionMode();
