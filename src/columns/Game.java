@@ -25,6 +25,7 @@ public class Game {
 	int lastboxnumber = 0;
 	int playerscore = 0;
 	int FinishedDeckStartingPoint; // Finished deck's starting point in the column.
+	int transfers = 0;
 	
 	MultiLinkedList columns = new MultiLinkedList();
 	SingleLinkedList box = new SingleLinkedList();
@@ -151,11 +152,11 @@ public class Game {
 		displayCursorFrameAtRowOfColumn(0, 0);
 	}
 
-	public SingleLinkedList getBox() {
+	private SingleLinkedList getBox() {
 		return box;
 	}
 
-	public ColumnNode getColumn(int index) {
+	private ColumnNode getColumn(int index) {
 		ColumnNode column = columns.getHead();
 		if (column == null) return null;
 
@@ -165,7 +166,7 @@ public class Game {
 		return column;
 	}
 	
-	public boolean transferLastNumberFromBox(int destinationColumnIndex) {
+	private boolean transferLastNumberFromBox(int destinationColumnIndex) {
 		ColumnNode destination = getColumn(destinationColumnIndex);
 		
 		if (destination.getRight() == null) {
@@ -190,10 +191,12 @@ public class Game {
 		displayColumn(destinationColumnIndex);
 		displayBox(0);
 		
+		transfers++;
+		
 		return true;
 	}
 	
-	public boolean transferNumbers(int sourceColumnIndex, int rowIndex, int destinationColumnIndex) {
+	private boolean transferNumbers(int sourceColumnIndex, int rowIndex, int destinationColumnIndex) {
 		if (sourceColumnIndex == destinationColumnIndex) return false;
 		
 		ColumnNode source = getColumn(sourceColumnIndex);
@@ -251,13 +254,13 @@ public class Game {
 
 		displayColumn(sourceColumnIndex);
 		displayColumn(destinationColumnIndex);
+		
+		transfers++;
 
-		
-		
 		return true;
 	}
 	
-	public boolean isDeckCompleted(int ColumnIndex) 
+	private boolean isDeckCompleted(int ColumnIndex) 
 	{
 		ColumnNode column = getColumn(ColumnIndex);
 		CardNode card = column.getRight();
@@ -340,7 +343,7 @@ public class Game {
 		}	
 	}
 	
-	public void drawNumberFromBox() 
+	private void drawNumberFromBox() 
 	{
 		if (box.size() != 0 && emptyBox) // box empty boolean will be added here when transferring operations are done 
 		{
@@ -371,12 +374,12 @@ public class Game {
 	private Clip cardSoundClip;
 	private Clip cardSoundClipTransfer;
 
-	public void playCardSound() {
+	private void playCardSound() {
 		cardSoundClip.setFramePosition(0);
 		cardSoundClip.start();
 	}
 	
-	public void playCardTransferringSound() {
+	private void playCardTransferringSound() {
 		cardSoundClipTransfer.setFramePosition(0);
 		cardSoundClipTransfer.start();
 	}
@@ -400,7 +403,7 @@ public class Game {
 		displayColumnTitle(destinationColumn, new TextAttributes(Color.WHITE));
 	}
 		
-	public void selectColumn(boolean selectNext) {
+	private void selectColumn(boolean selectNext) {
 		displayColumnTitle(destinationColumn, new TextAttributes(Color.WHITE));
 		destinationColumn += NUMBER_OF_COLUMNS + (selectNext ? 1 : -1);
 		destinationColumn %= NUMBER_OF_COLUMNS;
@@ -462,7 +465,7 @@ public class Game {
 	// ------------------------------------------------------ DISPLAY RELATED CODE -------------------------------------------------------------
 
 	// Listen for key events.
-	public TextWindow window;
+	private TextWindow window;
 
 	// Global margins, any screen element will obey these margins.
 	private static final int MARGIN_TOP = 1;
@@ -482,14 +485,14 @@ public class Game {
 	// Margins of the box.
 	private static final int BOX_MARGIN_LEFT = 5;
 	private static final int BOX_MARGIN_TOP = 2;
-
-	public void displayColumnTitle(int column, TextAttributes attributes) {
+	
+	private void displayColumnTitle(int column, TextAttributes attributes) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column;
 		displayString("C" + (column + 1), horizontalOffset, MARGIN_TOP, attributes);
 		displayString("--", horizontalOffset, MARGIN_TOP + 1, attributes);	
 	}
 	
-	public void displayColumn(int index) {
+	private void displayColumn(int index) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
 		
 		// Clear the column area entirely
@@ -520,7 +523,7 @@ public class Game {
 	 * Displays the selection frame of the cursor. The frame starts at the given row
 	 * of the column and ends at the end of the column.
 	 */
-	public void displayCursorFrameAtRowOfColumn(int column, int row) {
+	private void displayCursorFrameAtRowOfColumn(int column, int row) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
 		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
 		int verticalLinesToDraw = (ROW_MARGIN + 1) * (getColumn(column).getSize() - row);
@@ -538,7 +541,7 @@ public class Game {
 	/**
 	 * Clears the selection frame of the cursor.
 	 */
-	public void clearCursorFrameAtRowOfColumn(int column, int row) {
+	private void clearCursorFrameAtRowOfColumn(int column, int row) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
 		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
 		int verticalLinesToDraw = (ROW_MARGIN + 1) * (getColumn(column).getSize() - row);
@@ -568,7 +571,7 @@ public class Game {
 	 * Displays the frame of the box, and the number that was drawn. If the `number`
 	 * parameter is zero, inside of the box will be displayed blank.
 	 */
-	public void displayBox(int number) {
+	private void displayBox(int number) {
 		int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + BOX_MARGIN_LEFT;
 		int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP + 2 + BOX_MARGIN_TOP;
 
