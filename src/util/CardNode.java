@@ -3,7 +3,7 @@ package util;
 public class CardNode {
 
 	private Object data;
-	private CardNode next;
+	public CardNode next;
 	public CardNode(Object data) 
 	{
 		this.data=data;

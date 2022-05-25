@@ -4,71 +4,47 @@ import columns.Display;
 
 import java.util.Random;
 public class SingleLinkedList {
-	class Node {
-		Object data;
-		Node link = null;
-		
-		public Node(Object dataToAdd) {
-			data = dataToAdd;
-			link = null;
-		}
+	
 
-		public Object getData() {
-			return data;
-		}
-
-		public void setData(Object data) {
-			this.data = data;
-		}
-
-		public Node getLink() {
-			return link;
-		}
-
-		public void setLink(Node link) {
-			this.link = link;
-		}
-	}
-
-	private Node head = null;
+	private CardNode head = null;
 
 	public SingleLinkedList() {
 	}
 
 	public void add(Object data) {
 		if (head == null) {
-			Node newNode = new Node(data);
-			head = newNode;
+			CardNode cn = new CardNode(data);
+			head = cn;
 		} else {
-			Node temp = head;
-			while (temp.getLink() != null) {
-				temp = temp.getLink();
+			CardNode temp = head;
+			while (temp.getNext() != null) {
+				temp = temp.getNext();
 			}
-			Node newNode = new Node(data);
-			temp.setLink(newNode);
+			CardNode newCardNode = new CardNode(data);
+			temp.setNext(newCardNode);
 		}
 	}
 
-	public void removeNodeWithPosition(int position) {
+	public void removeCardNodeWithPosition(int position) {
 		if (head == null) {
 			return;
 		}
 
-		Node temp = head;
+		CardNode temp = head;
 
 		if (position == 0) {
-			head = temp.link;
+			head = temp.next;
 			return;
 		}
 		for (int i = 0; temp != null && i < position - 1; i++) {
-			temp = temp.link;
+			temp = temp.next;
 		}
-		if (temp == null || temp.link == null) {
+		if (temp == null || temp.next == null) {
 			return;
 		}
-		Node next = temp.link.link;
+		CardNode next = temp.next.next;
 
-		temp.link = next;
+		temp.next = next;
 	}
 	
 	
@@ -78,8 +54,8 @@ public class SingleLinkedList {
 		if (head == null) {
 			return 0;
 		}
-		Node temp = head;
-		head = head.getLink();
+		CardNode temp = head;
+		head = head.getNext();
 		int tempint = (int)temp.getData();
 		return tempint;
 	}
@@ -87,31 +63,31 @@ public class SingleLinkedList {
 	public void addSorted(Object dataToAdd) {
 
 		if (head == null) {
-			Node newnode = new Node(dataToAdd);
+			CardNode newnode = new CardNode(dataToAdd);
 			head = newnode;
 		}
 
 		else if ((int) dataToAdd > (int) head.getData()) {
-			Node newnode = new Node(dataToAdd);
-			newnode.setLink(head);
+			CardNode newnode = new CardNode(dataToAdd);
+			newnode.setNext(head);
 			head = newnode;
 		}
 
 		else {
-			Node temp = head;
-			Node previous = null;
+			CardNode temp = head;
+			CardNode previous = null;
 			while (temp != null && (int) dataToAdd <= (Integer) temp.getData()) {
 				previous = temp;
-				temp = temp.getLink();
+				temp = temp.getNext();
 
 			}
 			if (temp == null) {
-				Node newnode = new Node(dataToAdd);
-				previous.setLink(newnode);
+				CardNode newnode = new CardNode(dataToAdd);
+				previous.setNext(newnode);
 			} else {
-				Node newnode = new Node(dataToAdd);
-				previous.setLink(newnode);
-				newnode.setLink(temp);
+				CardNode newnode = new CardNode(dataToAdd);
+				previous.setNext(newnode);
+				newnode.setNext(temp);
 
 			}
 		}
@@ -127,9 +103,9 @@ public class SingleLinkedList {
 			return 0;
 		} else {
 			int count = 0;
-			Node temp = head;
+			CardNode temp = head;
 			while (temp != null) {
-				temp = temp.getLink();
+				temp = temp.getNext();
 				count++;
 			}
 			return count;
@@ -138,54 +114,54 @@ public class SingleLinkedList {
 
 	public void remove(Object dataToDelete) {
 		if (head == null) {
-			System.out.println("linked lis is empty");
+			System.out.println("nexted lis is empty");
 		} else if (size() == 1) {
 			head = null; ////////////////
 		} else {
 			while ((Integer) head.getData() == (Integer) dataToDelete)
-				head = head.getLink();
+				head = head.getNext();
 
-			Node temp = head;
-			Node previous = null;
+			CardNode temp = head;
+			CardNode previous = null;
 			while (temp != null) {
 				if ((Integer) temp.getData() == (Integer) dataToDelete) {
-					previous.setLink(temp.getLink());
+					previous.setNext(temp.getNext());
 					temp = previous;
 				}
 				previous = temp;
-				temp = temp.getLink();
+				temp = temp.getNext();
 			}
 		}
 
 	}
 	
-	public void addNodeWithPosition(int index,Object new_data) 
+	public void addCardNodeWithPosition(int index,Object new_data) 
 	{ 
-		Node new_node=new Node(new_data); 
+		CardNode new_node=new CardNode(new_data); 
 		if(index==0) 
 		{ 
-			new_node.setLink(head);
+			new_node.setNext(head);
 			head=new_node; 
 			return; 
 		} 
 		else
 		{
 			int count=0; 
-			Node temp=head,prev=null; 
+			CardNode temp=head,prev=null; 
 			while(count<index && temp!=null) 
 			{ 
 				prev=temp; 
-				temp=temp.getLink();	 
+				temp=temp.getNext();	 
 				count++; 
 			} 
-			prev.setLink(new_node);
-			new_node.setLink(temp); 
+			prev.setNext(new_node);
+			new_node.setNext(temp); 
 		}
 	} 
 
-	public Node findWithIndex(int position) 
+	public CardNode findWithIndex(int position) 
 	{
-		Node temp = head;
+		CardNode temp = head;
 		if (temp == null) return null;
 		else
 		{
@@ -193,7 +169,7 @@ public class SingleLinkedList {
 			while(temp != null)
 			{
 				if(count == position) break;
-				temp = temp.getLink();
+				temp = temp.getNext();
 				count++;
 			}	
 		}
@@ -205,36 +181,36 @@ public class SingleLinkedList {
 			return;
 		}
 		while(head != null && (Integer)head.getData()==(Integer)dataToDelete)
-			head = head.getLink();
-		Node temp = head;
-		Node previous = null;
+			head = head.getNext();
+		CardNode temp = head;
+		CardNode previous = null;
 		while(temp != null) {
 			if((Integer)temp.getData()==(Integer)dataToDelete) {
-				previous.setLink(temp.getLink());
+				previous.setNext(temp.getNext());
 				temp=previous;
 				break;
 			}
 			previous = temp;
-			temp = temp.getLink();
+			temp = temp.getNext();
 		}
 	}
 	
-	public Node removehead() {
+	public CardNode removehead() {
 		if (head == null) {
 			return null;
 		}
-		Node temp = head;
-		head = head.getLink();
+		CardNode temp = head;
+		head = head.getNext();
 		return null;
 	}
 	
 	public void shuffling() 
 	{
 		Random r = new Random();
-		Node temp;
+		CardNode temp;
 		if (head == null) 
 		{
-			System.out.println("linked list is empty");
+			System.out.println("nexted list is empty");
 		} 
 		else 
 		{
@@ -243,8 +219,8 @@ public class SingleLinkedList {
 				int randno1 = (int) r.nextInt(size());
 				int randno2 = (int) r.nextInt(size());
 				temp = findWithIndex(randno1);
-				removeNodeWithPosition(randno1);
-				addNodeWithPosition(randno2, temp.data);
+				removeCardNodeWithPosition(randno1);
+				addCardNodeWithPosition(randno2, temp.getData());
 			}
 		}
 
@@ -252,18 +228,18 @@ public class SingleLinkedList {
 	
 	public int findMax() {
 		if (head == null) {
-			System.err.println("The Linked List is empty");
+			System.err.println("The Nexted List is empty");
 			return Integer.MIN_VALUE;
 		} else {
 			int maxVal = Integer.MIN_VALUE;
 
-			Node temp = head;
+			CardNode temp = head;
 
 			while (temp != null) {
 				if ((int) temp.getData() > maxVal) {
 					maxVal = (int) temp.getData();
 				}
-				temp = temp.getLink();
+				temp = temp.getNext();
 			}
 			return maxVal;
 		}
@@ -275,11 +251,11 @@ public class SingleLinkedList {
 			System.out.println("List is empty");
 			return false;
 		} else {
-			Node temp = head;
+			CardNode temp = head;
 			while (temp != null) {
 				if ((Integer) temp.getData() == (Integer) data)
 					return true;
-				temp = temp.getLink();
+				temp = temp.getNext();
 			}
 			return false;
 		}
@@ -293,12 +269,12 @@ public class SingleLinkedList {
 		} 
 		else 
 		{
-			Node temp = head;
+			CardNode temp = head;
 			while (temp != null) 
 			{
 				if ((Integer) temp.getData() == (Integer) data)
 					count ++;
-				temp = temp.getLink();
+				temp = temp.getNext();
 			}
 			
 		}
@@ -310,44 +286,44 @@ public class SingleLinkedList {
 			System.out.println("List is empty");
 			return 0;
 		} else {
-			Node temp = head;
+			CardNode temp = head;
 			int counter = 0;
 			while (temp != null) {
 				if ((Integer) temp.getData() == (Integer) data) {
 					return counter;
 				}
 				counter++;
-				temp = temp.getLink();
+				temp = temp.getNext();
 			}
 			return 0;
 		}
 	}
 
-	public Node getNode(String data) {
-		return new Node(data);
+	public CardNode getCardNode(String data) {
+		return new CardNode(data);
 	}
 
-	public Node addToPosition(int position, String data) {
-		Node temp = head;
+	public CardNode addToPosition(int position, String data) {
+		CardNode temp = head;
 		if (position < 1) {
 			System.out.print("Invalid position");
 		}
 		if (position == 1) {
-			Node newNode = new Node(data);
-			newNode.link = temp;
-			head = newNode;
+			CardNode newCardNode = new CardNode(data);
+			newCardNode.next = temp;
+			head = newCardNode;
 		} else {
 			while (position-- != 0) {
 
 				if (position == 1) {
 
-					Node newNode = getNode(data);
-					newNode.link = temp.link;
-					temp.link = newNode;
+					CardNode newCardNode = getCardNode(data);
+					newCardNode.next = temp.next;
+					temp.next = newCardNode;
 
 					break;
 				}
-				temp = temp.link;
+				temp = temp.next;
 			}
 			if (position != 1) {
 				System.out.print("Position out of range");

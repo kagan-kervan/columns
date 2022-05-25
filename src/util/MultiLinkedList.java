@@ -88,6 +88,36 @@ public class MultiLinkedList {
 		}
 	}
 	
+	public void DeleteFromtheFinishedDeck(int columnIndex, int numberIndex, int Startingpoint) 
+	{
+		ColumnNode column = head;
+		if(head==null)
+			System.out.println("There is no column in the list");
+		else {
+			while(column!=null && (int)column.getData()!=columnIndex)
+				column=column.getDown();
+			CardNode currentCard = column.getRight();
+			CardNode prevCard = null;
+			for (int i = 0; i < Startingpoint; i++) 
+			{
+				prevCard=currentCard;
+				currentCard=currentCard.getNext();
+			}
+			while(currentCard!=null && (int)currentCard.getData()!=numberIndex) 
+			{
+				prevCard=currentCard;
+				currentCard=currentCard.getNext();
+			}
+			if(prevCard==null)
+				column.setRight(column.getRight().getNext());
+			else if(currentCard !=null) {
+				prevCard.setNext(currentCard.getNext());
+			}
+			else
+				System.out.println("There is no card in the column like "+numberIndex);
+		}
+	}
+	
 	public void display() 
 	{
 		ColumnNode temp = head;

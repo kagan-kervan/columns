@@ -54,6 +54,16 @@ public abstract class Cursor {
 						boolean transferred = Game.transferNumbers(column, row, destinationColumn);
 						if (transferred) exitSelectionMode();
 						Soundpl.playCardTransferringSound();
+						for (int i = 0; i < 5; i++) {
+							boolean isCompleted = Game.isDeckCompleted(i);
+							if(isCompleted==true) {
+								Game.playerscore += 1000;
+								for (int j = 1; j <= 10; j++) {
+									Game.columns.DeleteFromtheFinishedDeck(i, j, Game.FinishedDeckStartingPoint);
+								}
+								
+						}
+						}
 						break;
 					case KeyEvent.VK_Z:
 						exitSelectionMode();
