@@ -104,7 +104,12 @@ public class Game {
 							transferred = transferNumbers(column, row, destinationColumn);	
  						}
 						
- 						if (transferred) exitSelectionMode();
+						
+						if (finishedSets == 5)
+							exitGame();
+						else if (transferred)
+							exitSelectionMode();
+
 						playSoundClip(cardSoundClipTransfer);
 						break;
 					case KeyEvent.VK_Z, KeyEvent.VK_B:
@@ -167,6 +172,8 @@ public class Game {
 	}
 	
 	private boolean transferLastNumberFromBox(int destinationColumnIndex) {
+		if (box.size() == 0) return false;
+		
 		ColumnNode destination = getColumn(destinationColumnIndex);
 		
 		if (destination.getRight() == null) {
@@ -193,8 +200,6 @@ public class Game {
 		displayBox(0);
 		displayTransfersAndScore();
 		
-		if (finishedSets == 5) exitGame();
-		
 		return true;
 	}
 	
@@ -204,6 +209,8 @@ public class Game {
 		ColumnNode source = getColumn(sourceColumnIndex);
 		ColumnNode destination = getColumn(destinationColumnIndex);
 		
+		if (source.getSize() == 0) return false;
+
 		CardNode top = source.getRight();
 		CardNode nodeBeforeTop = null;
 		
@@ -261,8 +268,6 @@ public class Game {
 		displayColumn(destinationColumnIndex);
 		displayTransfersAndScore();
 
-		if (finishedSets == 5) exitGame();
-		
 		return true;
 	}
 	
