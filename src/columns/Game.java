@@ -40,14 +40,14 @@ public class Game {
 		
 		// Load sound files
 		try {
-			File cardSoundFile = new File(CARD_SOUND_FILE_PATH);
+			File cardSoundFile = new File("cardsound.wav");
 			cardSoundClip = AudioSystem.getClip();
 			cardSoundClip.open(AudioSystem.getAudioInputStream(cardSoundFile));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		try {
-			File cardSoundFile2 = new File(CARD_SOUND_TRANSFERRING_FILE_PATH);
+			File cardSoundFile2 = new File("cardtransferringsound.wav");
 			cardSoundClipTransfer = AudioSystem.getClip();
 			cardSoundClipTransfer.open(AudioSystem.getAudioInputStream(cardSoundFile2));
 		} catch (Exception e) {
@@ -105,7 +105,7 @@ public class Game {
  						}
 						
  						if (transferred) exitSelectionMode();
-						playCardTransferringSound();
+						playSoundClip(cardSoundClipTransfer);
 						break;
 					case KeyEvent.VK_Z, KeyEvent.VK_B:
 						exitSelectionMode();
@@ -368,7 +368,7 @@ public class Game {
 		else if(!emptyBox) // number will be added to selected column here.
 		{
 			displayBox(lastboxnumber);
-			playCardSound();
+			playSoundClip(cardSoundClip);
 		}
 		else
 		{
@@ -379,21 +379,13 @@ public class Game {
 	}
 	
 	// ------------------------------------------------------ SOUND RELATED CODE -------------------------------------------------------------
-	
-	private static final String CARD_SOUND_FILE_PATH = "cardsound.wav";
-	private static final String CARD_SOUND_TRANSFERRING_FILE_PATH = "cardtransferringsound.wav";
-	
+		
 	private Clip cardSoundClip;
 	private Clip cardSoundClipTransfer;
 
-	private void playCardSound() {
-		cardSoundClip.setFramePosition(0);
-		cardSoundClip.start();
-	}
-	
-	private void playCardTransferringSound() {
-		cardSoundClipTransfer.setFramePosition(0);
-		cardSoundClipTransfer.start();
+	private void playSoundClip(Clip sound) {
+		sound.setFramePosition(0);
+		sound.start();
 	}
 	
 	// ------------------------------------------------------ CURSOR RELATED CODE -------------------------------------------------------------
