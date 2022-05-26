@@ -23,7 +23,8 @@ public class Game {
 	static final int INITIAL_NUMBER_COUNT = 6;
 	
 	KeyListener keyListener;
-	
+	public static int console_x = 80;
+	public static int console_y = 40;
 	boolean emptyBox = true;
 	int lastboxnumber = 0;
 	int playerscore = 0;
@@ -58,9 +59,10 @@ public class Game {
 		}
 
 		fillAndShuffleBox(50);
+		Main.Cleaning();
 		distributeNumbersToColumns();		
 		
-		window = Enigma.getConsole("Columns", 80, 40, 20).getTextWindow();
+		window = Enigma.getConsole("Columns", console_x, console_y, 20).getTextWindow();
 
 		for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
 			displayColumn(i);
@@ -170,7 +172,7 @@ public class Game {
 	}
 	
 	private boolean transferLastNumberFromBox(int destinationColumnIndex) {
-		if (box.size() == 0) return false;
+		//if (box.size() == 0) return false;
 		
 		ColumnNode destination = getColumn(destinationColumnIndex);
 		
@@ -357,6 +359,7 @@ public class Game {
 			lastboxnumber = box.returnHead();
 			box.removeCardNodeWithPosition(0);
 			emptyBox = false;
+			playSoundClip(cardSoundClip);
 		} else if(emptyBox) {
 			// The box is empty, number 0 prints an empty box.
 			displayBox(0);
