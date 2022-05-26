@@ -293,7 +293,7 @@ public class Game {
 						count ++;                    // Increase the count.
 						startingnumber --;         // Decrease the number that uses in the matching deck.
 					}
-					else {
+					else if(startingnumber!=0) {
 						count = 0;   //Reset the count.
 						startingnumber = 10;
 						break;
@@ -307,7 +307,7 @@ public class Game {
 						count ++;             // Increase the count.
 						startingnumber ++;      // Increase the number that uses in the matching deck.
 					}
-					else {
+					else if(startingnumber!=11) {
 						count = 0;       // Resets the count.
 						startingnumber = 1;
 						break;
