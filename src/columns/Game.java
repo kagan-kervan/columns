@@ -406,10 +406,13 @@ public class Game {
 	 * the opposite-end.
 	 */
 	private void moveCursorVertical(boolean moveUp) {
+		int columnSize = getColumn(column).getSize();
+		
+		if (columnSize == 0) return;
+		
 		displayColumnNumbers(column, row, new TextAttributes(Color.WHITE));
 
 		// Move the current row
-		int columnSize = getColumn(column).getSize();
 		row += columnSize + (moveUp ? -1 : 1);
 		row %= columnSize;
 
