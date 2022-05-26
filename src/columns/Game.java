@@ -21,11 +21,14 @@ public class Game {
 	static final int NUMBER_OF_COLUMNS = 5;
 	static final int INITIAL_NUMBER_COUNT = 6;
 	
+	KeyListener keyListener;
+	
 	boolean emptyBox = true;
 	int lastboxnumber = 0;
 	int playerscore = 0;
 	int FinishedDeckStartingPoint; // Finished deck's starting point in the column.
 	int transfers = 0;
+	int finishedSets = 0;
 	
 	MultiLinkedList columns = new MultiLinkedList();
 	SingleLinkedList box = new SingleLinkedList();
@@ -72,7 +75,7 @@ public class Game {
 			}
 		}
 
-		KeyListener keyListener = new KeyListener() {
+		keyListener = new KeyListener() {
 			@Override
 			public void keyTyped(KeyEvent e) {
 			}
@@ -107,6 +110,9 @@ public class Game {
 					case KeyEvent.VK_Z, KeyEvent.VK_B:
 						exitSelectionMode();
 						break;
+					case KeyEvent.VK_E:
+						exitGame();
+						break;
 					}
 
 				} else {
@@ -138,7 +144,7 @@ public class Game {
 						enterSelectionMode();
 						break;
 					case KeyEvent.VK_E:
-						System.exit(0); // user can go back to menu with pressing E, we will redirect the user.
+						exitGame();
 						break;
 					}					
 				}
@@ -193,6 +199,8 @@ public class Game {
 		displayBox(0);
 		displayTransfersAndScore();
 		
+		if (finishedSets == 5) exitGame();
+		
 		return true;
 	}
 	
@@ -245,7 +253,8 @@ public class Game {
 		if (isDeckCompleted(destinationColumnIndex)) {
 			// Gives the score to the player.
 			playerscore += 1000;
-
+			finishedSets++;
+			
 			for (int i = 1; i <= 10; i++) {
 				// Deletes the finished deck.
 				columns.DeleteFromtheFinishedDeck(destinationColumnIndex, i, FinishedDeckStartingPoint);
@@ -258,6 +267,8 @@ public class Game {
 		displayColumn(destinationColumnIndex);
 		displayTransfersAndScore();
 
+		if (finishedSets == 5) exitGame();
+		
 		return true;
 	}
 	
@@ -486,6 +497,18 @@ public class Game {
 	// Margins of the box.
 	private static final int BOX_MARGIN_LEFT = 5;
 	private static final int BOX_MARGIN_TOP = 2;
+	
+	private void exitGame() {
+		String blankLine = " ".repeat(window.getColumns());
+		
+		for (int i = 0; i < window.getRows() - 1; i++)
+			displayString(blankLine, 0, i);
+		
+		float endGameScore = 100.0f * finishedSets + ((float) playerscore / transfers);
+		displayString("The game has ended. End-Game Score: " + endGameScore, 0, 0);
+		
+		window.removeKeyListener(keyListener);
+	}
 	
 	private void displayColumnTitle(int column, TextAttributes attributes) {
 		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column;
