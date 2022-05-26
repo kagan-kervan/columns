@@ -60,7 +60,7 @@ public class Game {
 		}
 
 		fillAndShuffleBox(50);
-		distributeNumbersToColumns(30);		
+		distributeNumbersToColumns();		
 		
 		window = Enigma.getConsole("Columns", 80, 40, 20).getTextWindow();
 
@@ -337,16 +337,14 @@ public class Game {
 		box.shuffling();
 	}
 	
-	private void distributeNumbersToColumns(int number) {
-		int randomno = 0;
-		int count = 0;
-		while(number > count)
-		{
-			randomno = (int) (Math.random() * 5);
-			columns.AddCard(randomno, box.returnHead());
-			box.removeCardNodeWithPosition(0);
-			count++;
-		}	
+	private void distributeNumbersToColumns() {
+
+		for (int i = 0; i < 6; i++) {
+			for (int j = 0; j < 5; j++) {
+				columns.AddCard(j, box.returnHead());
+				box.removeCardNodeWithPosition(0);
+			}
+		}
 	}
 	
 	private void drawNumberFromBox() {
