@@ -155,7 +155,7 @@ public class Game {
 		
 		displayTransfersAndScore();
 		displayBox(0);
-		displayCursorFrameAtRowOfColumn(0, 0);
+		displayColumnNumbers(0, 0, new TextAttributes(Color.RED));
 	}
 
 	private SingleLinkedList getBox() {
@@ -419,16 +419,14 @@ public class Game {
 	 * the opposite-end.
 	 */
 	private void moveCursorVertical(boolean moveUp) {
-		// Clear the cursor frame.
-		clearCursorFrameAtRowOfColumn(column, row);
+		displayColumnNumbers(column, row, new TextAttributes(Color.WHITE));
 
 		// Move the current row
 		int columnSize = getColumn(column).getSize();
 		row += columnSize + (moveUp ? -1 : 1);
 		row %= columnSize;
 
-		// Draw the cursor frame.
-		displayCursorFrameAtRowOfColumn(column, row);
+		displayColumnNumbers(column, row, new TextAttributes(Color.RED));
 	}
 
 	/**
@@ -441,8 +439,7 @@ public class Game {
 	 * last number of the next column.
 	 */
 	private void moveCursorHorizontal(boolean moveLeft) {
-		// Clear the cursor frame.
-		clearCursorFrameAtRowOfColumn(column, row);
+		displayColumnNumbers(column, row, new TextAttributes(Color.WHITE));
 
 		// Search for a non-empty column.
 		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
@@ -462,8 +459,7 @@ public class Game {
 			}
 		}
 
-		// Draw the cursor frame.
-		displayCursorFrameAtRowOfColumn(column, row);
+		displayColumnNumbers(column, row, new TextAttributes(Color.RED));
 	}
 	
 	// ------------------------------------------------------ DISPLAY RELATED CODE -------------------------------------------------------------
@@ -477,8 +473,7 @@ public class Game {
 
 	// The margin between two columns, and two rows.
 	private static final int COLUMN_MARGIN = 3;
-	private static final int ROW_MARGIN = 1;
-
+	
 	// The total size of the columns' display area.
 	private static final int COLUMN_AREA_WIDTH = 2 + (2 + COLUMN_MARGIN) * (NUMBER_OF_COLUMNS - 1);
 
@@ -508,68 +503,35 @@ public class Game {
 		displayString("--", horizontalOffset, MARGIN_TOP + 1, attributes);	
 	}
 	
-	private void displayColumn(int index) {
-		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
-		
-		// Clear the column area entirely
-		for (int i = 0; i < window.getRows(); i++)
-			displayString("    ", horizontalOffset - 1, i);
-		
-		// Display title
-		displayString("C" + (index+ 1), horizontalOffset, MARGIN_TOP);
-		displayString("--", horizontalOffset, MARGIN_TOP + 1);	
-		
-		// Display numbers
-		ColumnNode column = getColumn(index);
+	private void displayColumnNumbers(int columnIndex, int topNumberIndex, TextAttributes attributes) {
+		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * columnIndex;
+
+		ColumnNode column = getColumn(columnIndex);
 		CardNode card = column.getRight();
 		
-		int row = 0;
+		for (int i = 0; i < topNumberIndex; i++)
+			card = card.getNext();
+		
+		int row = topNumberIndex;
 		while (card != null) {
-			horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
-			int verticalOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row;
+			horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * columnIndex;
+			int verticalOffset = MARGIN_TOP + 3 + row;
 			int number = (int) card.getData();
-			displayString(rightAlignNumber(number), horizontalOffset, verticalOffset);
+			displayString(rightAlignNumber(number), horizontalOffset, verticalOffset, attributes);
 			
 			row++;
 			card = card.getNext();
-		}	
+		}
 	}
 	
-	/**
-	 * Displays the selection frame of the cursor. The frame starts at the given row
-	 * of the column and ends at the end of the column.
-	 */
-	private void displayCursorFrameAtRowOfColumn(int column, int row) {
-		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
-		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
-		int verticalLinesToDraw = (ROW_MARGIN + 1) * (getColumn(column).getSize() - row);
+	private void displayColumn(int index) {
+		// Clear the column area entirely
+		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
+		for (int i = 0; i < window.getRows(); i++)
+			displayString("    ", horizontalOffset - 1, i);
 
-		displayString("+--+", horizontalOffset, verticalStartOffset);
-
-		for (int i = 0; i < verticalLinesToDraw; i++) {
-			window.output(horizontalOffset, verticalStartOffset + i + 1, '|');
-			window.output(horizontalOffset + 3, verticalStartOffset + i + 1, '|');
-		}
-
-		displayString("+--+", horizontalOffset, verticalStartOffset + verticalLinesToDraw);
-	}
-
-	/**
-	 * Clears the selection frame of the cursor.
-	 */
-	private void clearCursorFrameAtRowOfColumn(int column, int row) {
-		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
-		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
-		int verticalLinesToDraw = (ROW_MARGIN + 1) * (getColumn(column).getSize() - row);
-
-		displayString("    ", horizontalOffset, verticalStartOffset);
-
-		for (int i = 0; i < verticalLinesToDraw; i++) {
-			window.output(horizontalOffset, verticalStartOffset + i + 1, ' ');
-			window.output(horizontalOffset + 3, verticalStartOffset + i + 1, ' ');
-		}
-
-		displayString("    ", horizontalOffset, verticalStartOffset + verticalLinesToDraw);
+		displayColumnTitle(index, new TextAttributes(Color.WHITE));
+		displayColumnNumbers(index, 0, new TextAttributes(Color.WHITE));
 	}
 
 	/**
