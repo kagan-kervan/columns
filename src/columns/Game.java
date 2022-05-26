@@ -1,6 +1,5 @@
 package columns;
 
-import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
 
@@ -15,18 +14,15 @@ public class Game {
 	
 	public static boolean emptyBox = true;
 	public static int lastboxnumber = 0;
-	public static double playerscore = 0;
+	public static int playerscore = 0;
 	public static int FinishedDeckStartingPoint; // Finished deck's starting point in the column.
-	public static int FinishedDecks = 0;
-	public static int transfercount = 0;
-	public static HighScore highscore ;
 	
 	public static MultiLinkedList columns = new MultiLinkedList();
 	private static SingleLinkedList box = new SingleLinkedList();
 		
 	public static void main(String[] args) throws IOException {
 		File f = new File("highscore.txt");
-		highscore = new HighScore(f);
+		HighScore hs = new HighScore(f);
 		Soundpl.initialize();
 		Game.initialize();
 		Cursor.initialize();
@@ -85,19 +81,6 @@ public class Game {
 		Game.lastboxnumber = 0;
 		Game.emptyBox = true;
 		
-		// Checks if there is any completed decks in the columns.
-				if (Game.isDeckCompleted(destinationColumnIndex)) {
-					// Gives the score to the player.
-					Game.playerscore += 1000;
-
-					for (int i = 1; i <= 10; i++) {
-						// Deletes the finished deck.
-						Game.columns.DeleteFromtheFinishedDeck(destinationColumnIndex, i, Game.FinishedDeckStartingPoint);
-					}
-					FinishedDecks ++;
-				}
-				
-		transfercount ++;
 		Display.displayColumn(destinationColumnIndex);
 		Display.displayBox(0);
 		
@@ -120,7 +103,7 @@ public class Game {
 		
 		int topNumber = (int) top.getData();
 		
-		if (destination.getRight() == null) {  // if Destination column is empty.
+		if (destination.getRight() == null) {
 			if (!(topNumber == 1 || topNumber == 10)) return false;
 			
 			destination.setRight(top);
@@ -148,9 +131,6 @@ public class Game {
 				nodeBeforeTop.setNext(null);
 			}
 		}
-		transfercount ++;
-		Display.displayColumn(sourceColumnIndex);
-		Display.displayColumn(destinationColumnIndex);
 		
 		// Checks if there is any completed decks in the columns.
 		if (Game.isDeckCompleted(destinationColumnIndex)) {
@@ -161,7 +141,6 @@ public class Game {
 				// Deletes the finished deck.
 				Game.columns.DeleteFromtheFinishedDeck(destinationColumnIndex, i, Game.FinishedDeckStartingPoint);
 			}
-			FinishedDecks ++;
 		}
 
 		Display.displayColumn(sourceColumnIndex);
@@ -189,7 +168,7 @@ public class Game {
 			int startingnumber = (int) card.getData(); // Gets the starting number.
 			CardNode temp = card;
 			if(startingnumber==10) {
-				while(temp!=null) {
+				while(temp.getNext()!=null) {
 					if((int)temp.getData()==startingnumber) {
 						count ++;                    // Increase the count.
 						startingnumber --;         // Decrease the number that uses in the matching deck.
@@ -276,16 +255,6 @@ public class Game {
 			// empty box.
 			Display.displayBox(0);
 		}
-	}
-	
-	public static void CalculateScoreandWriteHighScoreFile(String playername,double score,HighScore hs) throws IOException 
-	{
-		score = 100*FinishedDecks+(score/transfercount);
-		Display.window.setCursorPosition(45, 9);
-		Display.window.output("Your Score is:   " +playername+" - "+score);
-		hs.AddtoHighScore(playername, score);
-		hs.WritingtoFile();
-		
 	}
 	/*
 	public static void drawNumberFromBox(int column) 

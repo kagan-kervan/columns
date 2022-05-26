@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.io.IOException;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -62,16 +61,6 @@ public abstract class Cursor {
 						
  						if (transferred) exitSelectionMode();
 						Soundpl.playCardTransferringSound();
-						if(Game.FinishedDecks==5) {
-							try {
-								Display.window.setCursorPosition(45, 7);
-								Display.window.output("You Win");
-								Game.CalculateScoreandWriteHighScoreFile("Player", Game.playerscore, Game.highscore);
-							} catch (IOException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-						}
 						break;
 					case KeyEvent.VK_Z, KeyEvent.VK_B:
 						exitSelectionMode();
@@ -107,15 +96,8 @@ public abstract class Cursor {
 						enterSelectionMode();
 						break;
 					case KeyEvent.VK_E:
-						try {
-							Game.CalculateScoreandWriteHighScoreFile("Player", Game.playerscore, Game.highscore);
-							System.exit(0); // user can go back to menu with pressing E, we will redirect the user.
-							break;
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						
+						System.exit(0); // user can go back to menu with pressing E, we will redirect the user.
+						break;
 					}					
 				}
 			}
