@@ -1,40 +1,168 @@
 package columns;
 
+import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
+import enigma.console.TextAttributes;
+import enigma.console.TextWindow;
+import enigma.core.Enigma;
 import util.SingleLinkedList;
 import util.CardNode;
 import util.ColumnNode;
 import util.MultiLinkedList;
 
 public class Game {
-	public static final int NUMBER_OF_COLUMNS = 5;
-	public static final int INITIAL_NUMBER_COUNT = 6;
+	static final int NUMBER_OF_COLUMNS = 5;
+	static final int INITIAL_NUMBER_COUNT = 6;
 	
-	public static boolean emptyBox = true;
-	public static int lastboxnumber = 0;
-	public static int playerscore = 0;
-	public static int FinishedDeckStartingPoint; // Finished deck's starting point in the column.
+	KeyListener keyListener;
 	
-	public static MultiLinkedList columns = new MultiLinkedList();
-	private static SingleLinkedList box = new SingleLinkedList();
+	boolean emptyBox = true;
+	int lastboxnumber = 0;
+	int playerscore = 0;
+	int FinishedDeckStartingPoint; // Finished deck's starting point in the column.
+	int transfers = 0;
+	int finishedSets = 0;
+	
+	MultiLinkedList columns = new MultiLinkedList();
+	SingleLinkedList box = new SingleLinkedList();
 		
-	public static void main(String[] args) throws IOException {
+	public Game() throws FileNotFoundException {
 		File f = new File("highscore.txt");
 		HighScore hs = new HighScore(f);
-		Soundpl.initialize();
-		Game.initialize();
-		Cursor.initialize();
-		Display.initialize();
+		hs.display();
+		
+		// Load sound files
+		try {
+			File cardSoundFile = new File(CARD_SOUND_FILE_PATH);
+			cardSoundClip = AudioSystem.getClip();
+			cardSoundClip.open(AudioSystem.getAudioInputStream(cardSoundFile));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		try {
+			File cardSoundFile2 = new File(CARD_SOUND_TRANSFERRING_FILE_PATH);
+			cardSoundClipTransfer = AudioSystem.getClip();
+			cardSoundClipTransfer.open(AudioSystem.getAudioInputStream(cardSoundFile2));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		// Initialize single linked lists in the `columns` array.
+		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
+			 columns.AddColumn(i); 
+		}
+
+		fillAndShuffleBox(50);
+		distributeNumbersToColumns(30);		
+		
+		window = Enigma.getConsole("Columns", 80, 40, 20).getTextWindow();
+
+		for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
+			displayColumn(i);
+		
+		// Start the cursor from the first non-empty column.
+		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
+			if (getColumn(i).getSize() > 0) {
+				column = i;
+				break;
+			}
+		}
+
+		keyListener = new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+			}
+
+			@Override
+			public void keyReleased(KeyEvent e) {
+			}
+
+			@Override
+			public void keyPressed(KeyEvent event) {
+				int keyCode = event.getKeyCode();
+
+				if (selectionMode) {
+					switch (keyCode) {
+					case KeyEvent.VK_LEFT:
+						selectColumn(false);
+						break;
+					case KeyEvent.VK_RIGHT:
+						selectColumn(true);
+						break;
+					case KeyEvent.VK_X:
+						boolean transferred;
+						if (transferFromBox) {
+ 							transferred = transferLastNumberFromBox(destinationColumn);
+						} else {
+							transferred = transferNumbers(column, row, destinationColumn);	
+ 						}
+						
+ 						if (transferred) exitSelectionMode();
+						playCardTransferringSound();
+						break;
+					case KeyEvent.VK_Z, KeyEvent.VK_B:
+						exitSelectionMode();
+						break;
+					case KeyEvent.VK_E:
+						exitGame();
+						break;
+					}
+
+				} else {
+					switch (keyCode) {
+					case KeyEvent.VK_UP:
+						moveCursorVertical(true);
+						break;
+					case KeyEvent.VK_DOWN:
+						moveCursorVertical(false);
+						break;
+					case KeyEvent.VK_LEFT:
+						moveCursorHorizontal(true);
+						break;
+					case KeyEvent.VK_RIGHT:
+						moveCursorHorizontal(false);
+						break;
+					case KeyEvent.VK_B: 
+						if (lastboxnumber == 0) {
+							if(getBox().size() != 0) {
+								drawNumberFromBox();
+							}	
+						} else {
+							transferFromBox = true;
+							enterSelectionMode();
+						}
+						break;
+					case KeyEvent.VK_Z:
+						transferFromBox = false;
+						enterSelectionMode();
+						break;
+					case KeyEvent.VK_E:
+						exitGame();
+						break;
+					}					
+				}
+			}
+		};
+
+		window.addKeyListener(keyListener);
+		
+		displayTransfersAndScore();
+		displayBox(0);
+		displayCursorFrameAtRowOfColumn(0, 0);
 	}
 
-	public static SingleLinkedList getBox() {
-
+	private SingleLinkedList getBox() {
 		return box;
 	}
 
-	public static ColumnNode getColumn(int index) {
+	private ColumnNode getColumn(int index) {
 		ColumnNode column = columns.getHead();
 		if (column == null) return null;
 
@@ -43,24 +171,9 @@ public class Game {
 		
 		return column;
 	}
-
-	private static void initialize() {
-		// Initialize single linked lists in the `columns` array.
-		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
-			 columns.AddColumn(i);
-			 
-		}
-
-		fillAndShuffleBox(50);
-		distributeNumbersToColumns(30);
-		
-
-		for (int i = 0; i < NUMBER_OF_COLUMNS; i++)
-			Display.displayColumn(i);
-	}
 	
-	public static boolean transferLastNumberFromBox(int destinationColumnIndex) {
-		ColumnNode destination = Game.getColumn(destinationColumnIndex);
+	private boolean transferLastNumberFromBox(int destinationColumnIndex) {
+		ColumnNode destination = getColumn(destinationColumnIndex);
 		
 		if (destination.getRight() == null) {
 			if (!(lastboxnumber == 1 || lastboxnumber == 10)) return false;
@@ -78,20 +191,24 @@ public class Game {
 			lastNode.setNext(new CardNode(lastboxnumber));
 		}
 
-		Game.lastboxnumber = 0;
-		Game.emptyBox = true;
+		lastboxnumber = 0;
+		emptyBox = true;
+		transfers++;
 		
-		Display.displayColumn(destinationColumnIndex);
-		Display.displayBox(0);
+		displayColumn(destinationColumnIndex);
+		displayBox(0);
+		displayTransfersAndScore();
+		
+		if (finishedSets == 5) exitGame();
 		
 		return true;
 	}
 	
-	public static boolean transferNumbers(int sourceColumnIndex, int rowIndex, int destinationColumnIndex) {
+	private boolean transferNumbers(int sourceColumnIndex, int rowIndex, int destinationColumnIndex) {
 		if (sourceColumnIndex == destinationColumnIndex) return false;
 		
-		ColumnNode source = Game.getColumn(sourceColumnIndex);
-		ColumnNode destination = Game.getColumn(destinationColumnIndex);
+		ColumnNode source = getColumn(sourceColumnIndex);
+		ColumnNode destination = getColumn(destinationColumnIndex);
 		
 		CardNode top = source.getRight();
 		CardNode nodeBeforeTop = null;
@@ -133,27 +250,31 @@ public class Game {
 		}
 		
 		// Checks if there is any completed decks in the columns.
-		if (Game.isDeckCompleted(destinationColumnIndex)) {
+		if (isDeckCompleted(destinationColumnIndex)) {
 			// Gives the score to the player.
-			Game.playerscore += 1000;
-
+			playerscore += 1000;
+			finishedSets++;
+			
 			for (int i = 1; i <= 10; i++) {
 				// Deletes the finished deck.
-				Game.columns.DeleteFromtheFinishedDeck(destinationColumnIndex, i, Game.FinishedDeckStartingPoint);
+				columns.DeleteFromtheFinishedDeck(destinationColumnIndex, i, FinishedDeckStartingPoint);
 			}
 		}
 
-		Display.displayColumn(sourceColumnIndex);
-		Display.displayColumn(destinationColumnIndex);
+		transfers++;
 
-		
+		displayColumn(sourceColumnIndex);
+		displayColumn(destinationColumnIndex);
+		displayTransfersAndScore();
+
+		if (finishedSets == 5) exitGame();
 		
 		return true;
 	}
 	
-	public static boolean isDeckCompleted(int ColumnIndex) 
+	private boolean isDeckCompleted(int ColumnIndex) 
 	{
-		ColumnNode column = Game.getColumn(ColumnIndex);
+		ColumnNode column = getColumn(ColumnIndex);
 		CardNode card = column.getRight();
 		FinishedDeckStartingPoint=0; 
 		int count = 0;
@@ -203,7 +324,7 @@ public class Game {
 		return false;
 	}
 	
-	private static void fillAndShuffleBox(int number) {
+	private void fillAndShuffleBox(int number) {
 		int count = 0;
 		int randomno = 0;
 		
@@ -222,7 +343,7 @@ public class Game {
 		box.shuffling();
 	}
 	
-	private static void distributeNumbersToColumns(int number) {
+	private void distributeNumbersToColumns(int number) {
 		int randomno = 0;
 		int count = 0;
 		while(number > count)
@@ -234,11 +355,11 @@ public class Game {
 		}	
 	}
 	
-	public static void drawNumberFromBox() 
+	private void drawNumberFromBox() 
 	{
 		if (box.size() != 0 && emptyBox) // box empty boolean will be added here when transferring operations are done 
 		{
-			Display.displayBox(box.returnHead());
+			displayBox(box.returnHead());
 			lastboxnumber = box.returnHead();
 			box.removeCardNodeWithPosition(0);
 			emptyBox = false;
@@ -246,39 +367,272 @@ public class Game {
 		} 
 		else if(!emptyBox) // number will be added to selected column here.
 		{
-			Display.displayBox(lastboxnumber);
-			Soundpl.playCardSound();
+			displayBox(lastboxnumber);
+			playCardSound();
 		}
 		else
 		{
 			// The box is empty, number 0 prints an
 			// empty box.
-			Display.displayBox(0);
+			displayBox(0);
 		}
 	}
-	/*
-	public static void drawNumberFromBox(int column) 
-	{
-		if (box.size() != 0 && emptyBox) // box empty boolean will be added here when transferring operations are done 
-		{
-			Display.displayBox(box.returnHead());
-			lastboxnumber = box.returnHead();
-			box.removeNodeWithPosition(0);
-			emptyBox = false;
+	
+	// ------------------------------------------------------ SOUND RELATED CODE -------------------------------------------------------------
+	
+	private static final String CARD_SOUND_FILE_PATH = "cardsound.wav";
+	private static final String CARD_SOUND_TRANSFERRING_FILE_PATH = "cardtransferringsound.wav";
+	
+	private Clip cardSoundClip;
+	private Clip cardSoundClipTransfer;
+
+	private void playCardSound() {
+		cardSoundClip.setFramePosition(0);
+		cardSoundClip.start();
+	}
+	
+	private void playCardTransferringSound() {
+		cardSoundClipTransfer.setFramePosition(0);
+		cardSoundClipTransfer.start();
+	}
+	
+	// ------------------------------------------------------ CURSOR RELATED CODE -------------------------------------------------------------
+
+	private int column = 0;
+	private int row = 0;
+	private boolean selectionMode = false;
+	private boolean transferFromBox = false;
+	private int destinationColumn = 0;
+	
+	private void enterSelectionMode() {
+		selectionMode = true;
+		destinationColumn = column;
+		displayColumnTitle(destinationColumn, new TextAttributes(Color.GREEN));
+	}
+	
+	private void exitSelectionMode() {
+		selectionMode = false;
+		displayColumnTitle(destinationColumn, new TextAttributes(Color.WHITE));
+	}
+		
+	private void selectColumn(boolean selectNext) {
+		displayColumnTitle(destinationColumn, new TextAttributes(Color.WHITE));
+		destinationColumn += NUMBER_OF_COLUMNS + (selectNext ? 1 : -1);
+		destinationColumn %= NUMBER_OF_COLUMNS;
+		displayColumnTitle(destinationColumn, new TextAttributes(Color.GREEN));
+	}
+
+	/**
+	 * Moves the cursor vertically. If the limit is exceeded, the cursor starts from
+	 * the opposite-end.
+	 */
+	private void moveCursorVertical(boolean moveUp) {
+		// Clear the cursor frame.
+		clearCursorFrameAtRowOfColumn(column, row);
+
+		// Move the current row
+		int columnSize = getColumn(column).getSize();
+		row += columnSize + (moveUp ? -1 : 1);
+		row %= columnSize;
+
+		// Draw the cursor frame.
+		displayCursorFrameAtRowOfColumn(column, row);
+	}
+
+	/**
+	 * Moves the cursor horizontally. If the limit is exceeded, the cursor starts
+	 * from the opposite-end.
+	 * <p>
+	 * This method will skip the empty columns.
+	 * <p>
+	 * If the `row` is bigger than the next column's size, the `row` starts from the
+	 * last number of the next column.
+	 */
+	private void moveCursorHorizontal(boolean moveLeft) {
+		// Clear the cursor frame.
+		clearCursorFrameAtRowOfColumn(column, row);
+
+		// Search for a non-empty column.
+		for (int i = 0; i < NUMBER_OF_COLUMNS; i++) {
+			column += NUMBER_OF_COLUMNS + (moveLeft ? -1 : 1);
+			column %= NUMBER_OF_COLUMNS;
+			int columnSize = getColumn(column).getSize();
+
+			// If a non-empty column is found, select it.
+			if (columnSize > 0) {
+				// If the row is bigger than the next column's,
+				// size, start it from the last element of the next
+				// column.
+				if (row >= columnSize)
+					row = columnSize - 1;
+
+				break;
+			}
+		}
+
+		// Draw the cursor frame.
+		displayCursorFrameAtRowOfColumn(column, row);
+	}
+	
+	// ------------------------------------------------------ DISPLAY RELATED CODE -------------------------------------------------------------
+
+	// Listen for key events.
+	private TextWindow window;
+
+	// Global margins, any screen element will obey these margins.
+	private static final int MARGIN_TOP = 1;
+	private static final int MARGIN_LEFT = 1;
+
+	// The margin between two columns, and two rows.
+	private static final int COLUMN_MARGIN = 3;
+	private static final int ROW_MARGIN = 1;
+
+	// The total size of the columns' display area.
+	private static final int COLUMN_AREA_WIDTH = 2 + (2 + COLUMN_MARGIN) * (NUMBER_OF_COLUMNS - 1);
+
+	// Margins of the status titles.
+	private static final int STATUS_MARGIN_LEFT = 5;
+	private static final int STATUS_MARGIN_TOP = 0;
+
+	// Margins of the box.
+	private static final int BOX_MARGIN_LEFT = 5;
+	private static final int BOX_MARGIN_TOP = 2;
+	
+	private void exitGame() {
+		String blankLine = " ".repeat(window.getColumns());
+		
+		for (int i = 0; i < window.getRows() - 1; i++)
+			displayString(blankLine, 0, i);
+		
+		float endGameScore = 100.0f * finishedSets + ((float) playerscore / transfers);
+		displayString("The game has ended. End-Game Score: " + endGameScore, 0, 0);
+		
+		window.removeKeyListener(keyListener);
+	}
+	
+	private void displayColumnTitle(int column, TextAttributes attributes) {
+		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column;
+		displayString("C" + (column + 1), horizontalOffset, MARGIN_TOP, attributes);
+		displayString("--", horizontalOffset, MARGIN_TOP + 1, attributes);	
+	}
+	
+	private void displayColumn(int index) {
+		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
+		
+		// Clear the column area entirely
+		for (int i = 0; i < window.getRows(); i++)
+			displayString("    ", horizontalOffset - 1, i);
+		
+		// Display title
+		displayString("C" + (index+ 1), horizontalOffset, MARGIN_TOP);
+		displayString("--", horizontalOffset, MARGIN_TOP + 1);	
+		
+		// Display numbers
+		ColumnNode column = getColumn(index);
+		CardNode card = column.getRight();
+		
+		int row = 0;
+		while (card != null) {
+			horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * index;
+			int verticalOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row;
+			int number = (int) card.getData();
+			displayString(rightAlignNumber(number), horizontalOffset, verticalOffset);
 			
-		} 
-		else if(!emptyBox)
-		{
-			Game.getColumn(column).add(lastboxnumber);
-			Display.displayBox(0);
-			emptyBox = true;
+			row++;
+			card = card.getNext();
+		}	
+	}
+	
+	/**
+	 * Displays the selection frame of the cursor. The frame starts at the given row
+	 * of the column and ends at the end of the column.
+	 */
+	private void displayCursorFrameAtRowOfColumn(int column, int row) {
+		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
+		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
+		int verticalLinesToDraw = (ROW_MARGIN + 1) * (getColumn(column).getSize() - row);
+
+		displayString("+--+", horizontalOffset, verticalStartOffset);
+
+		for (int i = 0; i < verticalLinesToDraw; i++) {
+			window.output(horizontalOffset, verticalStartOffset + i + 1, '|');
+			window.output(horizontalOffset + 3, verticalStartOffset + i + 1, '|');
 		}
-		else
-		{
-			// The box is empty, number 0 prints an
-			// empty box.
-			Display.displayBox(0);
+
+		displayString("+--+", horizontalOffset, verticalStartOffset + verticalLinesToDraw);
+	}
+
+	/**
+	 * Clears the selection frame of the cursor.
+	 */
+	private void clearCursorFrameAtRowOfColumn(int column, int row) {
+		int horizontalOffset = MARGIN_LEFT + (2 + COLUMN_MARGIN) * column - 1;
+		int verticalStartOffset = MARGIN_TOP + 3 + (ROW_MARGIN + 1) * row - 1;
+		int verticalLinesToDraw = (ROW_MARGIN + 1) * (getColumn(column).getSize() - row);
+
+		displayString("    ", horizontalOffset, verticalStartOffset);
+
+		for (int i = 0; i < verticalLinesToDraw; i++) {
+			window.output(horizontalOffset, verticalStartOffset + i + 1, ' ');
+			window.output(horizontalOffset + 3, verticalStartOffset + i + 1, ' ');
+		}
+
+		displayString("    ", horizontalOffset, verticalStartOffset + verticalLinesToDraw);
+	}
+
+	/**
+	 * Displays the status titles, namely "Transfer" and "Score".
+	 */
+	private void displayTransfersAndScore() {
+		int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + STATUS_MARGIN_LEFT;
+		int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP;
+
+		displayString("Transfer:          " + transfers, horizontalOffset, verticalOffset);
+		displayString("   Score:          " + playerscore, horizontalOffset, verticalOffset + 1);
+	}
+
+	/**
+	 * Displays the frame of the box, and the number that was drawn. If the `number`
+	 * parameter is zero, inside of the box will be displayed blank.
+	 */
+	private void displayBox(int number) {
+		int horizontalOffset = MARGIN_LEFT + COLUMN_AREA_WIDTH + BOX_MARGIN_LEFT;
+		int verticalOffset = MARGIN_TOP + STATUS_MARGIN_TOP + 2 + BOX_MARGIN_TOP;
+
+		String draw = number == 0 ? "  " : rightAlignNumber(number);
+
+		displayString("+--+", horizontalOffset, verticalOffset);
+		displayString("|" + draw + "|", horizontalOffset, verticalOffset + 1);
+		displayString("+--+", horizontalOffset, verticalOffset + 2);
+	}
+
+	/**
+	 * Displays a string at the specified coordinates.
+	 */
+	private void displayString(String str, int left, int top) {
+		window.setCursorPosition(left, top);
+		window.output(str);
+	}
+	
+	/**
+	 * Displays a string at the specified coordinates with specified attributes.
+	 */
+	private void displayString(String str, int left, int top, TextAttributes attributes) {
+		window.setCursorPosition(left, top);
+		window.output(str, attributes);
+	}
+
+	/**
+	 * Aligns <i>digits</i> to right. If the number has two digits, say 10, the
+	 * number is not aligned.
+	 * <p>
+	 * Example: if the number is 3 the returned string will be " 3".
+	 */
+	private static String rightAlignNumber(int number) {
+		if (number < 10) {
+			return " " + number;
+		} else {
+			return Integer.toString(number);
 		}
 	}
-	*/
 }
