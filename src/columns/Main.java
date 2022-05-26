@@ -43,12 +43,27 @@ public class Main {
 	public static void HintsOption()
 	{
 		Cleaning();
-		windowMenu.output("Hints\n");
-		
+		windowMenu.setCursorPosition(23, 2); 
+		windowMenu.output("HINTS",new TextAttributes(Color.green));
+		windowMenu.setCursorPosition(22, 3); 
+		windowMenu.output("-------",new TextAttributes(Color.green));
+		windowMenu.setCursorPosition(2, 4); 
+		windowMenu.output("1 - The Card Box has been shuffled",new TextAttributes(Color.red));
+		windowMenu.setCursorPosition(6, 5); 
+		windowMenu.output("but It does not mean that there is no card to match inside it!",new TextAttributes(Color.red));
+		windowMenu.setCursorPosition(2, 7); 
+		windowMenu.output("2 - The first opportunity is not the best option at all...",new TextAttributes(Color.red));
+		windowMenu.setCursorPosition(2, 9); 
+		windowMenu.output("3 - Calculate as many probabilities as you can do!",new TextAttributes(Color.red));
+		windowMenu.setCursorPosition(2, 11); 
+		windowMenu.output("4 - Pay attention to the Transferring Conditions",new TextAttributes(Color.red));
+		windowMenu.setCursorPosition(6, 12); 
+		windowMenu.output("You are not able to do every move you wish.",new TextAttributes(Color.red));
 	}
 	
 	public static void GameStartOption()
 	{
+		
 		try {
 			
 			Game game = new Game();
@@ -62,8 +77,27 @@ public class Main {
 	public static void ExitOption()
 	{
 		Cleaning();
-		windowMenu.output("Exit\n");
-		System.exit(0);
+		windowMenu.setCursorPosition(8, 2); 
+		windowMenu.output("You are leaving the game...",new TextAttributes(Color.green));
+		windowMenu.setCursorPosition(8, 3); 
+		windowMenu.output("------------------------------",new TextAttributes(Color.green));
+		windowMenu.setCursorPosition(8, 4); 
+		windowMenu.output("                        - Best Wishes",new TextAttributes(Color.green));
+		windowMenu.setCursorPosition(13, 7); 
+		windowMenu.output("Prepared by",new TextAttributes(Color.red));
+		windowMenu.setCursorPosition(13, 8); 
+		windowMenu.output("_____________",new TextAttributes(Color.red));
+		windowMenu.setCursorPosition(15, 9); 
+		windowMenu.output("-Yiðit Önlü");
+		windowMenu.setCursorPosition(15, 10); 
+		windowMenu.output("-Berkay Dinç");
+		windowMenu.setCursorPosition(15, 11); 
+		windowMenu.output("-Ahmet Salih Kara");
+		windowMenu.setCursorPosition(15, 12); 
+		windowMenu.output("-Ahmet Kaðan Kervan");
+		windowMenu.setCursorPosition(18, 17); 
+		windowMenu.output("Press E to leave",new TextAttributes(Color.green));
+		
 		
 		
 	}
@@ -120,8 +154,12 @@ public class Main {
 				case 39: // right
 					
 					ExitOption();
-					keyCode = 1;
 					break;
+					
+				case 69: // right
+					System.exit(0);
+					break;
+					
 				} 
 			}
 		};

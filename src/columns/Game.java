@@ -110,7 +110,7 @@ public class Game {
 						else if (transferred)
 							exitSelectionMode();
 
-						playSoundClip(cardSoundClipTransfer);
+						//playSoundClip(cardSoundClipTransfer);
 						break;
 					case KeyEvent.VK_Z, KeyEvent.VK_B:
 						exitSelectionMode();
@@ -199,7 +199,7 @@ public class Game {
 		displayColumn(destinationColumnIndex);
 		displayBox(0);
 		displayTransfersAndScore();
-		
+		playSoundClip(cardSoundClipTransfer);
 		return true;
 	}
 	
@@ -267,7 +267,7 @@ public class Game {
 		displayColumn(sourceColumnIndex);
 		displayColumn(destinationColumnIndex);
 		displayTransfersAndScore();
-
+		playSoundClip(cardSoundClipTransfer);
 		return true;
 	}
 	

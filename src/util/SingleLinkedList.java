@@ -205,7 +205,7 @@ public class SingleLinkedList {
 	public void shuffling() 
 	{
 		Random r = new Random();
-		CardNode temp;
+		CardNode temp, temp2;
 		if (head == null) 
 		{
 			System.out.println("nexted list is empty");
@@ -217,11 +217,14 @@ public class SingleLinkedList {
 				int randno1 = (int) r.nextInt(size());
 				int randno2 = (int) r.nextInt(size());
 				temp = findWithIndex(randno1);
+				temp2 = findWithIndex(randno2); // n1 n2 n3 n4 n5 n6
 				removeCardNodeWithPosition(randno1);
+				addCardNodeWithPosition(randno1, temp2.getData());
+				removeCardNodeWithPosition(randno2);
 				addCardNodeWithPosition(randno2, temp.getData());
+				
 			}
 		}
-
 	}
 	
 	public int findMax() {
