@@ -131,9 +131,7 @@ public class Game {
 						break;
 					case KeyEvent.VK_B: 
 						if (lastboxnumber == 0) {
-							if(getBox().size() != 0) {
-								drawNumberFromBox();
-							}	
+							drawNumberFromBox();
 						} else {
 							transferFromBox = true;
 							enterSelectionMode();
@@ -156,10 +154,6 @@ public class Game {
 		displayTransfersAndScore();
 		displayBox(0);
 		displayColumnNumbers(0, 0, new TextAttributes(Color.RED));
-	}
-
-	private SingleLinkedList getBox() {
-		return box;
 	}
 
 	private ColumnNode getColumn(int index) {
@@ -355,25 +349,15 @@ public class Game {
 		}	
 	}
 	
-	private void drawNumberFromBox() 
-	{
-		if (box.size() != 0 && emptyBox) // box empty boolean will be added here when transferring operations are done 
-		{
+	private void drawNumberFromBox() {
+		// Box empty boolean will be added here when transferring operations are done 
+		if (box.size() != 0 && emptyBox) {
 			displayBox(box.returnHead());
 			lastboxnumber = box.returnHead();
 			box.removeCardNodeWithPosition(0);
 			emptyBox = false;
-			
-		} 
-		else if(!emptyBox) // number will be added to selected column here.
-		{
-			displayBox(lastboxnumber);
-			playSoundClip(cardSoundClip);
-		}
-		else
-		{
-			// The box is empty, number 0 prints an
-			// empty box.
+		} else if(emptyBox) {
+			// The box is empty, number 0 prints an empty box.
 			displayBox(0);
 		}
 	}
