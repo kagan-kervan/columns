@@ -1,4 +1,7 @@
-Sema Firat-378.24
 Tarik Deniz-521.07
-Ali Vadi-136.32
+Sema Firat-378.24
 Seda Ruzgar-224.67
+Player-200.0
+Player-171.42857360839844
+Ali Vadi-136.32
+Player-0.0

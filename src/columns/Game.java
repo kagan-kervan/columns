@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -34,9 +35,6 @@ public class Game {
 	SingleLinkedList box = new SingleLinkedList();
 		
 	public Game() throws FileNotFoundException {
-		File f = new File("highscore.txt");
-		HighScore hs = new HighScore(f);
-		hs.display();
 		
 		// Load sound files
 		try {
@@ -288,7 +286,7 @@ public class Game {
 			int startingnumber = (int) card.getData(); // Gets the starting number.
 			CardNode temp = card;
 			if(startingnumber==10) {
-				while(temp.getNext()!=null) {
+				while(temp!=null) {
 					if((int)temp.getData()==startingnumber) {
 						count ++;                    // Increase the count.
 						startingnumber --;         // Decrease the number that uses in the matching deck.
@@ -483,6 +481,20 @@ public class Game {
 		
 		float endGameScore = 100.0f * finishedSets + ((float) playerscore / transfers);
 		displayString("The game has ended. End-Game Score: " + endGameScore, 0, 0);
+		File f = new File("highscore.txt");  //Read the file
+		try {
+			HighScore hs = new HighScore(f);
+			hs.AddtoHighScore("Player", (double)endGameScore);  //Add the player to the high score table.
+			try {
+				hs.WritingtoFile();   // Writing to the high score file.
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		window.removeKeyListener(keyListener);
 	}
